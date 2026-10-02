@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Microsoft.Extensions.DependencyInjection;
 using ModularSaaS.Security.Abstractions;
 using ModularSaaS.Security.Abstractions.Constants;
 using ModularSaaS.Security.Abstractions.Extensions;

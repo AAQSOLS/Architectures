@@ -85,18 +85,18 @@ In `Development` mode, the application will automatically:
 2. Seed the system tenant (`00000000-0000-0000-0000-000000000001`).
 3. Seed system permissions catalog (Users, Roles, Tenants, Permissions).
 4. Seed default tenant roles (`Admin`, `Member`).
-5. Seed initial platform super-admin (`superadmin@modularsaas.com` / `SuperAdmin123!`).
+5. Seed initial platform super-admin (configured via `Seed:PlatformAdminEmail` and `Seed:PlatformAdminPassword`).
 
 Swagger UI will be available at:
 `https://localhost:5001/swagger` (or corresponding port assigned by launch settings).
 
 ---
 
-## 4. Default Seed Credentials (Development)
+## 4. Seed Credentials Configuration (Development)
 
-| User Type | Email | Password | Scope |
+| User Type | Default Email | Password | Scope |
 |---|---|---|---|
-| Platform Super-Admin | `superadmin@modularsaas.com` | `SuperAdmin123!` | Global Platform (`/api/platform/*`) |
+| Platform Super-Admin | `superadmin@modularsaas.local` | Configured via `user-secrets` or env (`Seed:PlatformAdminPassword`) | Global Platform (`/api/platform/*`) |
 
 ---
 

@@ -10,11 +10,11 @@ public sealed class SeedOptions
 
     [Required]
     [EmailAddress]
-    public string PlatformAdminEmail { get; set; } = "superadmin@modularsaas.com";
+    public string PlatformAdminEmail { get; set; } = "superadmin@modularsaas.local";
 
     [Required]
     [MinLength(8)]
-    public string PlatformAdminPassword { get; set; } = "SuperAdmin123!";
+    public string PlatformAdminPassword { get; set; } = string.Empty;
 
     [Required]
     public string PlatformAdminFirstName { get; set; } = "Platform";
@@ -34,7 +34,7 @@ public sealed class SeedOptions
 
     [Required]
     [MinLength(8)]
-    public string DefaultTenantAdminPassword { get; set; } = "Admin123!";
+    public string DefaultTenantAdminPassword { get; set; } = string.Empty;
 
     [Required]
     public string DefaultTenantAdminFirstName { get; set; } = "Default";
