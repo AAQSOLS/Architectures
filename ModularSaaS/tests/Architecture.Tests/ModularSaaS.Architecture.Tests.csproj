@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>ModularSaaS.Architecture.Tests</RootNamespace>
+    <AssemblyName>ModularSaaS.Architecture.Tests</AssemblyName>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <NoWarn>$(NoWarn);CA1707</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="Mapster" />
+    <PackageReference Include="xunit.runner.visualstudio">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Mono.Cecil" />
+    <PackageReference Include="coverlet.collector">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Domain\ModularSaaS.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Application\ModularSaaS.Application.csproj" />
+    <ProjectReference Include="..\..\src\Infrastructure\ModularSaaS.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\apps\Api\ModularSaaS.Api.csproj" />
+    <ProjectReference Include="..\..\src\Plugins\Security\ModularSaaS.Security.Abstractions\ModularSaaS.Security.Abstractions.csproj" />
+    <ProjectReference Include="..\..\src\Plugins\Security\ModularSaaS.Security.Core\ModularSaaS.Security.Core.csproj" />
+    <ProjectReference Include="..\..\src\Plugins\Security\ModularSaaS.Security.AspNetCore\ModularSaaS.Security.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\src\Plugins\Observability\ModularSaaS.Observability\ModularSaaS.Observability.csproj" />
+  </ItemGroup>
+
+</Project>

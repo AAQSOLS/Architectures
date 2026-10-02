@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>ModularSaaS.Domain</RootNamespace>
+    <AssemblyName>ModularSaaS.Domain</AssemblyName>
+  </PropertyGroup>
+
+</Project>

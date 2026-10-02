@@ -1,0 +1,10 @@
+# Consumed by Microsoft.CodeAnalysis.BannedApiAnalyzers (rule RS0030).
+# Use IClock instead of reading system time directly (Clean Architecture rule).
+P:System.DateTime.Now;Use IClock
+P:System.DateTime.UtcNow;Use IClock
+P:System.DateTime.Today;Use IClock
+P:System.DateTimeOffset.Now;Use IClock
+P:System.DateTimeOffset.UtcNow;Use IClock
+
+# Bypasses tenant isolation. Allowed only in platform-scoped handlers.
+M:Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.IgnoreQueryFilters``1(System.Linq.IQueryable{``0});Tenant filter bypass is allowed only in platform handlers

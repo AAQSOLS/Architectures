@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>ModularSaaS.Security.Abstractions</RootNamespace>
+    <AssemblyName>ModularSaaS.Security.Abstractions</AssemblyName>
+    <Description>Pure contracts and interfaces for ModularSaaS Security.</Description>
+  </PropertyGroup>
+
+</Project>

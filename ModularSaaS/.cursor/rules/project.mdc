@@ -1,0 +1,31 @@
+---
+description: Core architecture rules, coding standards, and verification commands for ModularSaaS
+globs: **/*
+alwaysApply: true
+---
+
+# ModularSaaS Project Rules
+
+Always follow the shared guidelines in [AGENTS.md](../../AGENTS.md) and [docs/ARCHITECTURE.md](../../docs/ARCHITECTURE.md).
+
+## Critical Boundaries
+- Dependencies point strictly inward: Hosts -> Application -> Domain; Infrastructure -> Application -> Domain.
+- Domain depends on nothing external. Zero packages, zero framework dependencies.
+- `apps/Api` host references only `Application/{Module}/Abstractions`, `Application/{Module}/Models`, and Domain enums. Never reference entities, repositories, or `DbContext`.
+- Modules are vertical folders, not separate projects. Namespaces must strictly match folder paths using file-scoped namespaces.
+- Writes go through aggregate roots via `IRepository<T>`. Reads go through `IXxxReader` via EF projections or Dapper stored procedures.
+
+## Code Standards
+- Target: .NET 10 (`net10.0`), C# 13, `TreatWarningsAsErrors=true`, `EnforceCodeStyleInBuild=true`.
+- Accessibility: Explicit modifiers on every type (`internal sealed`, `public sealed`).
+- Models: Input, Result, ListItem, Request, and Response types must be `sealed record` with `required` and `init` properties. No DTO inheritance.
+- Time: Never use `DateTime.Now` or `DateTime.UtcNow` (banned symbol RS0030). Always inject `IClock`.
+- Multi-tenancy: Tenant-owned entities must implement `ITenantEntity`. Bypassing query filters (`IgnoreQueryFilters()`) is forbidden in tenant code.
+
+## Verification Commands
+Before completing any task, ensure:
+```bash
+dotnet build ModularSaaS.slnx
+dotnet test tests/Architecture.Tests/ModularSaaS.Architecture.Tests.csproj
+dotnet test ModularSaaS.slnx
+```

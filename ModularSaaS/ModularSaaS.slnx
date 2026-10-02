@@ -1,0 +1,29 @@
+<Solution>
+  <Folder Name="/apps/" />
+  <Folder Name="/apps/Api/">
+    <Project Path="apps/Api/ModularSaaS.Api.csproj" />
+  </Folder>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Application/">
+    <Project Path="src/Application/ModularSaaS.Application.csproj" />
+  </Folder>
+  <Folder Name="/src/Domain/">
+    <Project Path="src/Domain/ModularSaaS.Domain.csproj" />
+  </Folder>
+  <Folder Name="/src/Infrastructure/">
+    <Project Path="src/Infrastructure/ModularSaaS.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Plugins/" />
+  <Folder Name="/src/Plugins/Security/">
+    <Project Path="src/Plugins/Security/ModularSaaS.Security.Abstractions/ModularSaaS.Security.Abstractions.csproj" />
+    <Project Path="src/Plugins/Security/ModularSaaS.Security.Core/ModularSaaS.Security.Core.csproj" />
+    <Project Path="src/Plugins/Security/ModularSaaS.Security.AspNetCore/ModularSaaS.Security.AspNetCore.csproj" />
+  </Folder>
+  <Folder Name="/src/Plugins/Observability/">
+    <Project Path="src/Plugins/Observability/ModularSaaS.Observability/ModularSaaS.Observability.csproj" />
+  </Folder>
+  <Folder Name="/tests/" />
+  <Folder Name="/tests/Architecture.Tests/">
+    <Project Path="tests/Architecture.Tests/ModularSaaS.Architecture.Tests.csproj" />
+  </Folder>
+</Solution>
