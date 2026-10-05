@@ -20,20 +20,20 @@ internal sealed class TenantResolutionMiddleware(RequestDelegate next)
 
         Guid? tenantId = null;
 
-        // 1. Resolve from X-Tenant-Id header
-        if (context.Request.Headers.TryGetValue(AppHeaders.TenantId, out var headerValue) &&
-            Guid.TryParse(headerValue.ToString(), out var headerTenantId))
-        {
-            tenantId = headerTenantId;
-        }
-        // 2. Resolve from JWT tenant_id claim
-        else if (context.User.Identity?.IsAuthenticated == true)
+        // 1. Authenticated users: JWT claim ALWAYS dictates the tenant (cannot be spoofed)
+        if (context.User.Identity?.IsAuthenticated == true)
         {
             var claimValue = context.User.FindFirst(AppClaimTypes.TenantId)?.Value;
             if (Guid.TryParse(claimValue, out var claimTenantId))
             {
                 tenantId = claimTenantId;
             }
+        }
+        // 2. Unauthenticated requests (e.g. login, public register): Resolve from X-Tenant-Id header
+        else if (context.Request.Headers.TryGetValue(AppHeaders.TenantId, out var headerValue) &&
+                 Guid.TryParse(headerValue.ToString(), out var headerTenantId))
+        {
+            tenantId = headerTenantId;
         }
 
         // 3. Resolve impersonation state from JWT claims
