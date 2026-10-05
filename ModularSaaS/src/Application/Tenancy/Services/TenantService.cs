@@ -13,7 +13,6 @@ namespace ModularSaaS.Application.Tenancy.Services;
 
 internal sealed class TenantService(
     ITenantRepository tenantRepository,
-    ITenancyReader tenancyReader,
     IUserRegistrationService userRegistrationService,
     IUnitOfWork unitOfWork,
     IValidator<CreateTenantInput> createTenantValidator) : ITenantService
@@ -77,7 +76,7 @@ internal sealed class TenantService(
 
     public async Task<Result<PagedResult<TenantListItem>>> ListTenantsAsync(TenantFilter filter, CancellationToken ct = default)
     {
-        var result = await tenancyReader.ListAsync(filter, ct);
+        var result = await tenantRepository.ListAsync(filter, ct);
         return result;
     }
 

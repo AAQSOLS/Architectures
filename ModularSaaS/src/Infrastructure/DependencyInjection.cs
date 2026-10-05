@@ -14,8 +14,6 @@ using ModularSaaS.Infrastructure.Caching;
 using ModularSaaS.Infrastructure.Communications;
 using ModularSaaS.Infrastructure.Persistence;
 using ModularSaaS.Infrastructure.Persistence.Interceptors;
-using ModularSaaS.Infrastructure.Persistence.Readers.Identity;
-using ModularSaaS.Infrastructure.Persistence.Readers.Tenancy;
 using ModularSaaS.Infrastructure.Persistence.Repositories.Identity;
 using ModularSaaS.Infrastructure.Persistence.Repositories.Platform;
 using ModularSaaS.Infrastructure.Persistence.Repositories.Tenancy;
@@ -93,11 +91,7 @@ public static class DependencyInjection
                 sp.GetRequiredService<AuditInterceptor>());
         });
 
-        // 5. Readers
-        services.AddScoped<ITenancyReader, TenancyReader>();
-        services.AddScoped<IIdentityReader, IdentityReader>();
-
-        // 6. Repositories & Unit of Work
+        // 5. Repositories & Unit of Work
         services.AddScoped<ITenantRepository, TenantRepository>();
         services.AddScoped<IPlatformUserRepository, PlatformUserRepository>();
 

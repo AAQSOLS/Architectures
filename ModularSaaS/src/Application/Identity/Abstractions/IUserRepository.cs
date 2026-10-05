@@ -1,4 +1,6 @@
+using ModularSaaS.Application.Identity.Models;
 using ModularSaaS.Application.Shared.Abstractions;
+using ModularSaaS.Application.Shared.Models;
 using ModularSaaS.Domain.Identity;
 
 namespace ModularSaaS.Application.Identity.Abstractions;
@@ -18,4 +20,6 @@ public interface IUserRepository : IRepository<User>, IUserPermissionReader
     public Task RemoveRoleAsync(Guid userId, Guid roleId, CancellationToken ct = default);
 
     public Task SetDirectPermissionAsync(Guid userId, Guid permissionId, bool isGranted, CancellationToken ct = default);
+
+    public Task<PagedResult<UserListItem>> ListUsersAsync(Guid tenantId, PageRequest page, CancellationToken ct = default);
 }

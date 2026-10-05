@@ -12,7 +12,6 @@ namespace ModularSaaS.Application.Identity.Services;
 internal sealed class UserService(
     IUserRepository userRepository,
     IRoleRepository roleRepository,
-    IIdentityReader identityReader,
     IPasswordHasher passwordHasher,
     IUnitOfWork unitOfWork,
     ITenantContext tenantContext,
@@ -101,7 +100,7 @@ internal sealed class UserService(
     public async Task<Result<PagedResult<UserListItem>>> ListUsersAsync(PageRequest page, CancellationToken ct = default)
     {
         var tenantId = tenantContext.RequireTenantId();
-        var result = await identityReader.ListUsersAsync(tenantId, page, ct);
+        var result = await userRepository.ListUsersAsync(tenantId, page, ct);
         return result;
     }
 
