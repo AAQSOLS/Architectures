@@ -26,9 +26,9 @@ ModularSaaS/
 │   ├── Domain/              # Enterprise domain entities, value objects, domain enums, ITenantEntity contract
 │   ├── Application/         # Use case services, interfaces (IRepository, IReader, IClock), models, validators
 │   ├── Infrastructure/      # EF Core DbContext, migrations, repositories, readers, interceptors, security
-│   └── Plugins/
-│       ├── Security/        # Reusable security abstractions, core JWT/BCrypt, and AspNetCore guards
-│       └── Observability/   # OpenTelemetry tracing, metrics, redaction, and exporter setup
+│   └── Common/
+│       ├── ModularSaaS.Security/       # Cross-cutting security, RBAC handler, BCrypt, and secure tokens
+│       └── ModularSaaS.Observability/  # OpenTelemetry tracing, metrics, redaction, and exporter setup
 ├── tests/
 │   └── Architecture.Tests/  # Mono.Cecil architectural boundary enforcement suite (Rules A1-A13)
 ├── docs/                    # Canonical architectural reference (docs/ARCHITECTURE.md, docs/migration/)
@@ -41,7 +41,7 @@ ModularSaaS/
 - `src/Domain`: Enterprise core. Zero external package or project dependencies. Entities, value objects, domain enums, and domain exceptions. Tenant entities implement `ITenantEntity`.
 - `src/Application`: Application business rules and orchestration. Organized into feature folders (`Identity`, `Tenancy`, `Shared`). Contains use cases, input/result models, validators, and abstraction interfaces. Public surface never exposes Domain entities or value objects.
 - `src/Infrastructure`: Technical implementations. `AppDbContext` (internal), entity type configurations, migrations, repositories, readers, interceptors (`TenantInterceptor`, `AuditInterceptor`), and clock.
-- `src/Plugins`: Standalone reusable libraries. Independent of application domain and persistence specifics.
+- `src/Common`: Cross-cutting building blocks (`ModularSaaS.Security`, `ModularSaaS.Observability`). Independent of application domain and persistence specifics.
 - `tests/Architecture.Tests`: Architectural unit tests verifying layer dependencies, internal visibility, sealed models, and module isolation.
 
 ## 3. Development & Verification Commands

@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
-using ModularSaaS.Security.AspNetCore.Authorization;
+using ModularSaaS.Security.Authorization;
 
 namespace ModularSaaS.Api.Extensions;
 

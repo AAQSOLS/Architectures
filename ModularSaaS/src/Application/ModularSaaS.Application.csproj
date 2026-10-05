@@ -7,7 +7,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Domain\ModularSaaS.Domain.csproj" />
-    <ProjectReference Include="..\Plugins\Security\ModularSaaS.Security.Abstractions\ModularSaaS.Security.Abstractions.csproj" />
   </ItemGroup>
 
   <ItemGroup>

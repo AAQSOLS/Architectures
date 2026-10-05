@@ -5,7 +5,7 @@ using ModularSaaS.Api.Common;
 using ModularSaaS.Application.Identity.Abstractions;
 using ModularSaaS.Application.Identity.Permissions;
 using ModularSaaS.Application.Shared.Constants;
-using ModularSaaS.Security.AspNetCore.Authorization;
+using ModularSaaS.Security.Authorization;
 
 namespace ModularSaaS.Api.Controllers.Identity;
 

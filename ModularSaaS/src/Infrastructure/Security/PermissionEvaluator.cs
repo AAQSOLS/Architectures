@@ -1,5 +1,5 @@
 using ModularSaaS.Application.Shared.Abstractions;
-using ModularSaaS.Security.Abstractions;
+using ModularSaaS.Security.Authorization;
 
 namespace ModularSaaS.Infrastructure.Security;
 

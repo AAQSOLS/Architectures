@@ -1,18 +1,16 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
-using ModularSaaS.Security.Abstractions;
-using ModularSaaS.Security.Abstractions.Constants;
-using ModularSaaS.Security.Abstractions.Extensions;
-using ModularSaaS.Security.Core.Hashing;
-using ModularSaaS.Security.Core.Tokens;
+using ModularSaaS.Security;
+using ModularSaaS.Security.Authorization;
+using ModularSaaS.Security.Constants;
+using ModularSaaS.Security.Cryptography;
 using Xunit;
 
 namespace ModularSaaS.Architecture.Tests.Rules;
 
 public class SecurityPluginTests
 {
-    private const string TestSigningKey = "ThisIsASecretKeyForTestingPurposesThatIsAtLeast32BytesLong!";
-
     [Fact]
     public void BCryptPasswordHasher_Hashes_And_Verifies_Correctly()
     {
@@ -20,8 +18,8 @@ public class SecurityPluginTests
         var password = "SuperSecretPassword123!";
 
         var hash = hasher.Hash(password);
-        var isValid = hasher.Verify(password, hash);
-        var isInvalid = hasher.Verify("WrongPassword!", hash);
+        var isValid = BCryptPasswordHasher.Verify(password, hash);
+        var isInvalid = BCryptPasswordHasher.Verify("WrongPassword!", hash);
 
         Assert.True(isValid);
         Assert.False(isInvalid);
@@ -60,82 +58,49 @@ public class SecurityPluginTests
     }
 
     [Fact]
-    public void JsonWebTokenService_Creates_And_Validates_Token()
+    public void HasPermissionAttribute_Configures_Policy()
     {
-        var options = new JwtServiceOptions
-        {
-            Issuer = "TestIssuer",
-            Audience = "TestAudience",
-            SigningKey = TestSigningKey,
-            DefaultLifetime = TimeSpan.FromMinutes(15),
-            ClockSkew = TimeSpan.Zero
-        };
-
-        var service = new JsonWebTokenService(options);
-        var userId = Guid.NewGuid();
-        var tenantId = Guid.NewGuid();
-
-        var descriptor = new TokenDescriptor(
-            UserId: userId,
-            TenantId: tenantId,
-            Email: "user@test.com",
-            Name: "Test User",
-            Roles: ["Member", "Admin"],
-            Permissions: ["Users.Read", "Users.Write"]);
-
-        var tokenResult = service.CreateToken(descriptor);
-        Assert.NotNull(tokenResult.Token);
-        Assert.NotNull(tokenResult.TokenId);
-
-        var principal = service.ValidateToken(tokenResult.Token);
-        Assert.NotNull(principal);
-
-        var sub = principal.FindFirst(SecurityClaimTypes.Subject)?.Value;
-        var tid = principal.FindFirst(SecurityClaimTypes.TenantId)?.Value;
-        var email = principal.FindFirst(SecurityClaimTypes.Email)?.Value;
-
-        Assert.Equal(userId.ToString(), sub);
-        Assert.Equal(tenantId.ToString(), tid);
-        Assert.Equal("user@test.com", email);
+        var attribute = new HasPermissionAttribute("Users.Read");
+        Assert.Equal("Users.Read", attribute.Permission);
+        Assert.Equal("Users.Read", attribute.Policy);
     }
 
     [Fact]
-    public void JsonWebTokenService_Rejects_Invalid_Signature()
+    public async Task PermissionAuthorizationHandler_Authorizes_Matching_Claim()
     {
-        var options1 = new JwtServiceOptions
+        var requirement = new PermissionRequirement("Users.Read");
+        var claims = new[]
         {
-            Issuer = "TestIssuer",
-            Audience = "TestAudience",
-            SigningKey = TestSigningKey
+            new Claim(SecurityClaimTypes.Permission, "Users.Read")
         };
+        var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, "TestAuth"));
+        var context = new AuthorizationHandlerContext([requirement], principal, null);
 
-        var options2 = new JwtServiceOptions
-        {
-            Issuer = "TestIssuer",
-            Audience = "TestAudience",
-            SigningKey = "DifferentSigningKeyThatIsAlsoAtLeast32BytesLong!"
-        };
+        var services = new ServiceCollection().BuildServiceProvider();
+        var handler = new PermissionAuthorizationHandler(services);
 
-        var service1 = new JsonWebTokenService(options1);
-        var service2 = new JsonWebTokenService(options2);
+        await handler.HandleAsync(context);
 
-        var token = service1.CreateToken(new TokenDescriptor(Guid.NewGuid(), Guid.NewGuid())).Token;
-
-        var principal = service2.ValidateToken(token);
-        Assert.Null(principal);
+        Assert.True(context.HasSucceeded);
     }
 
     [Fact]
-    public async Task InMemoryTokenRevocationRegistry_Tracks_Revoked_Tokens()
+    public async Task PermissionAuthorizationHandler_Authorizes_PlatformAdmin()
     {
-        var registry = new InMemoryTokenRevocationRegistry();
-        var tokenId = Guid.NewGuid().ToString();
+        var requirement = new PermissionRequirement("Tenants.Delete");
+        var claims = new[]
+        {
+            new Claim(SecurityClaimTypes.Role, SecurityRoles.PlatformAdmin)
+        };
+        var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, "TestAuth"));
+        var context = new AuthorizationHandlerContext([requirement], principal, null);
 
-        Assert.False(await registry.IsRevokedAsync(tokenId));
+        var services = new ServiceCollection().BuildServiceProvider();
+        var handler = new PermissionAuthorizationHandler(services);
 
-        await registry.RevokeAsync(tokenId, DateTimeOffset.UtcNow.AddMinutes(5));
+        await handler.HandleAsync(context);
 
-        Assert.True(await registry.IsRevokedAsync(tokenId));
+        Assert.True(context.HasSucceeded);
     }
 
     [Fact]

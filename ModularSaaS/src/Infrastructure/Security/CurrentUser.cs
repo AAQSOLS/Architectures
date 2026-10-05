@@ -6,9 +6,15 @@ using ModularSaaS.Application.Shared.Constants;
 
 namespace ModularSaaS.Infrastructure.Security;
 
-internal sealed class CurrentUser(IHttpContextAccessor httpContextAccessor) : ICurrentUser
+internal sealed class CurrentUser(
+    IHttpContextAccessor httpContextAccessor,
+    ITenantContext tenantContext) : ModularSaaS.Application.Shared.Abstractions.ICurrentUser, ModularSaaS.Security.ICurrentUser
 {
     private ClaimsPrincipal? User => httpContextAccessor.HttpContext?.User;
+
+    public ClaimsPrincipal? Principal => User;
+
+    public Guid? TenantId => tenantContext.TenantId;
 
     public Guid? UserId
     {

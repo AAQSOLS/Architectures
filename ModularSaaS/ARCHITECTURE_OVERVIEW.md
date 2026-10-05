@@ -40,9 +40,9 @@ flowchart TD
         DataStores["Repositories & Readers<br/>(SQL Server Database)"]
     end
 
-    subgraph Plugins["6. Standalone Reusable Plugins (src/Plugins)"]
-        SecurityPlugin["ModularSaaS.Security<br/>- Abstractions (ICurrentUser, IPasswordHasher)<br/>- Core (JsonWebTokenHandler, BCrypt)<br/>- AspNetCore (RBAC Handler, Tenant Guard)"]
-        ObservabilityPlugin["ModularSaaS.Observability<br/>- OpenTelemetry Traces & Metrics<br/>- PII & Query Redaction<br/>- OTLP & Azure Monitor Exporters"]
+    subgraph Common["6. Cross-Cutting Common Libraries (src/Common)"]
+        SecurityLib["ModularSaaS.Security<br/>- RBAC Authorization Handler & Policy Provider<br/>- BCrypt Password Hasher & SecureRandomGenerator<br/>- Claims, Roles, and ICurrentUser"]
+        ObservabilityLib["ModularSaaS.Observability<br/>- OpenTelemetry Traces & Metrics<br/>- PII & Query Redaction<br/>- OTLP Exporters & Health Filter"]
     end
 
     %% Flow Connections
@@ -140,39 +140,22 @@ flowchart LR
 
 ---
 
-## 4. Standalone Security Plugin Suite (`src/Plugins/Security`)
-
-The security subsystem is decoupled from domain aggregates into three composable libraries packageable as NuGet packages.
-
+## 4. Unified Security Building Block (`src/Common/ModularSaaS.Security`)
+ 
+The security subsystem provides cross-cutting authorization, hashing, and token generation in a single unified library without framework bloat.
+ 
 ```mermaid
 flowchart TD
-    subgraph Abstractions["ModularSaaS.Security.Abstractions (Zero Dependencies)"]
-        ICurrentUser["ICurrentUser<br/>- UserId<br/>- TenantId<br/>- Principal"]
-        CurrentUserExt["CurrentUserExtensions<br/>- GetEmail()<br/>- HasRole()<br/>- IsPlatformAdmin()<br/>- GetPermissions()"]
-        Contracts["Contracts<br/>- IPasswordHasher<br/>- ITokenService<br/>- ISecureRandomGenerator<br/>- ITokenRevocationRegistry<br/>- ISecurityEventSink"]
+    subgraph Security["ModularSaaS.Security"]
+        AuthZ["Authorization<br/>- HasPermissionAttribute<br/>- PermissionPolicyProvider<br/>- PermissionAuthorizationHandler<br/>- IPermissionEvaluator"]
+        Crypto["Cryptography<br/>- BCryptPasswordHasher (auto-rehash)<br/>- SecureRandomGenerator (constant-time equals)"]
+        Identity["Identity & Constants<br/>- SecurityClaimTypes<br/>- SecurityRoles<br/>- ICurrentUser & CurrentUserExtensions"]
     end
-
-    subgraph Core["ModularSaaS.Security.Core (Crypto Engine)"]
-        JwtService["JsonWebTokenService<br/>- Modern JsonWebTokenHandler<br/>- Zero clock-skew default<br/>- Symmetric & Asymmetric rollover"]
-        PasswordHasher["BCryptPasswordHasher<br/>- Work factor inspection<br/>- Auto-rehash detection"]
-        RandomGen["SecureRandomGenerator<br/>- Constant-time equality (FixedTimeEquals)"]
-        Revocation["InMemoryTokenRevocationRegistry<br/>- Thread-safe token invalidation"]
-    end
-
-    subgraph AspNetCore["ModularSaaS.Security.AspNetCore (HTTP & Policies)"]
-        PolicyProvider["PermissionPolicyProvider<br/>- Dynamic policy generation"]
-        AuthHandler["PermissionAuthorizationHandler<br/>- Claims + IPermissionEvaluator"]
-        TenantGuard["TenantIsolationGuardMiddleware<br/>- Cross-tenant replay protection"]
-        Builder["SecurityPluginBuilder<br/>- services.AddSecurityPlugin()"]
-    end
-
-    Abstractions --> Core
-    Core --> AspNetCore
 ```
-
+ 
 ---
-
-## 5. OpenTelemetry Observability Pipeline (`src/Plugins/Observability`)
+ 
+## 5. OpenTelemetry Observability Pipeline (`src/Common/ModularSaaS.Observability`)
 
 Observability is vendor-agnostic and built on open standards, supporting Azure Monitor, Datadog, Grafana/Prometheus, or Jaeger via OTLP.
 
@@ -249,8 +232,8 @@ flowchart TD
 | **Application** | `src/Application/` | Services, Use Cases, Ports/Interfaces, DTOs, FluentValidators, Application Mappings. | No SQL queries, no `AppDbContext`, no HTTP Controllers. |
 | **Infrastructure** | `src/Infrastructure/` | Internal `AppDbContext`, Repositories, Readers, Interceptors, Migrations. | No business validation rules, no HTTP controllers. |
 | **Host (API)** | `apps/Api/` | Controllers, Host Contracts, Middleware, OpenAPI, Scalar UI, Host Mappings, `Program.cs`. | No `AppDbContext`, no SQL, no direct Domain entity exposure. |
-| **Security Plugin** | `src/Plugins/Security/` | Token engine, BCrypt hashing, `ICurrentUser`, dynamic RBAC provider, tenant guard. | No hardcoded business tables or tenant domain entities. |
-| **Observability Plugin** | `src/Plugins/Observability/` | ActivitySource, Metrics Meters, PII sanitizers, `/health` filters, OTLP exporters. | No hardcoded vendor-specific tracing SDKs in business code. |
+| **Security Building Block** | `src/Common/ModularSaaS.Security/` | BCrypt hashing, `ICurrentUser`, dynamic RBAC policy provider & handler, secure random tokens. | No business tables or tenant domain entities. |
+| **Observability Building Block** | `src/Common/ModularSaaS.Observability/` | ActivitySource, Metrics Meters, PII sanitizers, `/health` filters, OTLP exporters. | No hardcoded vendor-specific tracing SDKs in business code. |
 
 ---
 

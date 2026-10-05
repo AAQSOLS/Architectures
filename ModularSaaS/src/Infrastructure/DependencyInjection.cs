@@ -13,6 +13,7 @@ using ModularSaaS.Application.Tenancy.Abstractions;
 using ModularSaaS.Infrastructure.Caching;
 using ModularSaaS.Infrastructure.Communications;
 using ModularSaaS.Infrastructure.Persistence;
+using ModularSaaS.Security.Cryptography;
 using ModularSaaS.Infrastructure.Persistence.Interceptors;
 using ModularSaaS.Infrastructure.Persistence.Repositories.Identity;
 using ModularSaaS.Infrastructure.Persistence.Repositories.Platform;
@@ -49,6 +50,7 @@ public static class DependencyInjection
 
         // 2. Core Infrastructure Services
         services.AddSingleton<IClock, SystemClock>();
+        services.AddSingleton<BCryptPasswordHasher>();
         services.AddSingleton<IPasswordHasher, PasswordHasher>();
 
         services.AddScoped<JwtTokenService>();
@@ -57,7 +59,9 @@ public static class DependencyInjection
         services.AddScoped<IPlatformTokenService>(sp => sp.GetRequiredService<JwtTokenService>());
         services.AddScoped<ISecureTokenGenerator>(sp => sp.GetRequiredService<JwtTokenService>());
 
-        services.AddScoped<ICurrentUser, CurrentUser>();
+        services.AddScoped<CurrentUser>();
+        services.AddScoped<ICurrentUser>(sp => sp.GetRequiredService<CurrentUser>());
+        services.AddScoped<ModularSaaS.Security.ICurrentUser>(sp => sp.GetRequiredService<CurrentUser>());
 
         services.AddScoped<TenantContext>();
         services.AddScoped<ITenantContext>(sp => sp.GetRequiredService<TenantContext>());
@@ -68,7 +72,7 @@ public static class DependencyInjection
         services.AddSingleton<IPermissionCacheReader>(sp => sp.GetRequiredService<PermissionCache>());
         services.AddSingleton<IPermissionCacheInvalidator>(sp => sp.GetRequiredService<PermissionCache>());
 
-        services.AddScoped<ModularSaaS.Security.Abstractions.IPermissionEvaluator, PermissionEvaluator>();
+        services.AddScoped<ModularSaaS.Security.Authorization.IPermissionEvaluator, PermissionEvaluator>();
 
         services.AddTransient<IEmailSender, ConsoleEmailSender>();
 

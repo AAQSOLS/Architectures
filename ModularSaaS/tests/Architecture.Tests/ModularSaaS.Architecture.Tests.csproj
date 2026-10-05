@@ -28,10 +28,8 @@
     <ProjectReference Include="..\..\src\Application\ModularSaaS.Application.csproj" />
     <ProjectReference Include="..\..\src\Infrastructure\ModularSaaS.Infrastructure.csproj" />
     <ProjectReference Include="..\..\apps\Api\ModularSaaS.Api.csproj" />
-    <ProjectReference Include="..\..\src\Plugins\Security\ModularSaaS.Security.Abstractions\ModularSaaS.Security.Abstractions.csproj" />
-    <ProjectReference Include="..\..\src\Plugins\Security\ModularSaaS.Security.Core\ModularSaaS.Security.Core.csproj" />
-    <ProjectReference Include="..\..\src\Plugins\Security\ModularSaaS.Security.AspNetCore\ModularSaaS.Security.AspNetCore.csproj" />
-    <ProjectReference Include="..\..\src\Plugins\Observability\ModularSaaS.Observability\ModularSaaS.Observability.csproj" />
+    <ProjectReference Include="..\..\src\Common\ModularSaaS.Security\ModularSaaS.Security.csproj" />
+    <ProjectReference Include="..\..\src\Common\ModularSaaS.Observability\ModularSaaS.Observability.csproj" />
   </ItemGroup>
 
 </Project>

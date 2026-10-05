@@ -12,7 +12,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Domain\ModularSaaS.Domain.csproj" />
     <ProjectReference Include="..\Application\ModularSaaS.Application.csproj" />
-    <ProjectReference Include="..\Plugins\Security\ModularSaaS.Security.Core\ModularSaaS.Security.Core.csproj" />
+    <ProjectReference Include="..\Common\ModularSaaS.Security\ModularSaaS.Security.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,7 +25,6 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="BCrypt.Net-Next" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
   </ItemGroup>
