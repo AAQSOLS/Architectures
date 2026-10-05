@@ -5,6 +5,7 @@ using ModularSaaS.Domain.Identity;
 using ModularSaaS.Domain.Platform;
 using ModularSaaS.Domain.Shared;
 using ModularSaaS.Domain.Tenancy;
+using ModularSaaS.Infrastructure.Persistence.Outbox;
 
 namespace ModularSaaS.Infrastructure.Persistence;
 
@@ -34,6 +35,8 @@ internal class AppDbContext(
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
     public DbSet<PasswordResetToken> PasswordResetTokens => Set<PasswordResetToken>();
+
+    public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -1,4 +1,5 @@
 using ModularSaaS.Domain.Identity.Enums;
+using ModularSaaS.Domain.Identity.Events;
 using ModularSaaS.Domain.Shared;
 
 namespace ModularSaaS.Domain.Identity;
@@ -22,6 +23,8 @@ public class User : AuditableEntity, ITenantEntity, IAggregateRoot
         Status = UserStatus.Active;
         EmailConfirmed = false;
         AccessFailedCount = 0;
+
+        RaiseDomainEvent(new UserCreatedDomainEvent(Id, TenantId, Email, FirstName, LastName));
     }
 
     public Guid TenantId { get; private set; }

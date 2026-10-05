@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -13,8 +14,9 @@ using ModularSaaS.Application.Tenancy.Abstractions;
 using ModularSaaS.Infrastructure.Caching;
 using ModularSaaS.Infrastructure.Communications;
 using ModularSaaS.Infrastructure.Persistence;
-using ModularSaaS.Security.Cryptography;
 using ModularSaaS.Infrastructure.Persistence.Interceptors;
+using ModularSaaS.Infrastructure.Persistence.Outbox;
+using ModularSaaS.Security.Cryptography;
 using ModularSaaS.Infrastructure.Persistence.Repositories.Identity;
 using ModularSaaS.Infrastructure.Persistence.Repositories.Platform;
 using ModularSaaS.Infrastructure.Persistence.Repositories.Tenancy;
@@ -45,6 +47,11 @@ public static class DependencyInjection
 
         services.AddOptions<SeedOptions>()
             .BindConfiguration(SeedOptions.SectionName)
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
+        services.AddOptions<OutboxProcessorOptions>()
+            .BindConfiguration(OutboxProcessorOptions.SectionName)
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
@@ -79,6 +86,7 @@ public static class DependencyInjection
         // 3. Interceptors
         services.AddScoped<TenantInterceptor>();
         services.AddScoped<AuditInterceptor>();
+        services.AddScoped<OutboxInterceptor>();
 
         // 4. Database persistence
         var connectionString = configuration.GetConnectionString(DatabaseOptions.DefaultConnectionName);
@@ -92,7 +100,8 @@ public static class DependencyInjection
             options.UseSqlServer(connectionString);
             options.AddInterceptors(
                 sp.GetRequiredService<TenantInterceptor>(),
-                sp.GetRequiredService<AuditInterceptor>());
+                sp.GetRequiredService<AuditInterceptor>(),
+                sp.GetRequiredService<OutboxInterceptor>());
         });
 
         // 5. Repositories & Unit of Work
@@ -109,6 +118,10 @@ public static class DependencyInjection
         services.AddScoped<IPasswordResetTokenRepository, PasswordResetTokenRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<DbInitializer>();
+
+        // 6. Outbox background processing & event handlers
+        services.AddHostedService<OutboxProcessorBackgroundService>();
+        services.ScanDomainEventHandlers(typeof(IDomainEventHandler<>).Assembly);
 
         // 7. Health Checks
         services.AddHealthChecks()
@@ -134,6 +147,23 @@ public static class DependencyInjection
                 ClockSkew = TimeSpan.Zero
             };
         });
+
+        return services;
+    }
+
+    private static IServiceCollection ScanDomainEventHandlers(this IServiceCollection services, Assembly assembly)
+    {
+        var openHandlerType = typeof(IDomainEventHandler<>);
+        var handlerTypes = assembly.GetTypes()
+            .Where(t => t.IsClass && !t.IsAbstract)
+            .SelectMany(t => t.GetInterfaces()
+                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == openHandlerType)
+                .Select(i => new { ServiceType = i, ImplementationType = t }));
+
+        foreach (var handler in handlerTypes)
+        {
+            services.AddScoped(handler.ServiceType, handler.ImplementationType);
+        }
 
         return services;
     }
