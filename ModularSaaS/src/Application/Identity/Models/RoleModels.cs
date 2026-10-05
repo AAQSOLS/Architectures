@@ -24,3 +24,7 @@ public sealed record RoleDetailsResult(
     bool IsSystem,
     bool IsDefault,
     IReadOnlyList<string> Permissions);
+
+public sealed record AssignRoleInput(
+    Guid RoleId,
+    DateTimeOffset? ExpiresAtUtc = null);

@@ -1,9 +1,7 @@
 using Asp.Versioning;
-using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModularSaaS.Api.Common;
-using ModularSaaS.Api.Contracts.Tenancy;
 using ModularSaaS.Application.Shared.Constants;
 using ModularSaaS.Application.Shared.Models;
 using ModularSaaS.Application.Tenancy.Abstractions;
@@ -18,11 +16,10 @@ namespace ModularSaaS.Api.Controllers.Platform;
 public sealed class PlatformTenantsController(ITenantService tenantService) : BaseApiController
 {
     [HttpPost]
-    public async Task<IActionResult> CreateTenant([FromBody] CreateTenantRequest request, CancellationToken ct)
+    public async Task<IActionResult> CreateTenant([FromBody] CreateTenantInput input, CancellationToken ct)
     {
-        var input = request.Adapt<CreateTenantInput>();
         var result = await tenantService.CreateTenantAsync(input, ct);
-        return HandleResult<TenantResult, TenantResponse>(result);
+        return HandleResult(result);
     }
 
     [HttpGet]
@@ -35,14 +32,14 @@ public sealed class PlatformTenantsController(ITenantService tenantService) : Ba
     {
         var filter = new TenantFilter(status, search, new PageRequest(pageNumber, pageSize));
         var result = await tenantService.ListTenantsAsync(filter, ct);
-        return HandleResult<PagedResult<TenantListItem>, PagedResult<TenantResponse>>(result);
+        return HandleResult(result);
     }
 
     [HttpGet(ApiRoutes.PlatformTenants.ById)]
     public async Task<IActionResult> GetTenant(Guid id, CancellationToken ct)
     {
         var result = await tenantService.GetByIdAsync(id, ct);
-        return HandleResult<TenantResult, TenantResponse>(result);
+        return HandleResult(result);
     }
 
     [HttpPost(ApiRoutes.PlatformTenants.Suspend)]
@@ -59,4 +56,3 @@ public sealed class PlatformTenantsController(ITenantService tenantService) : Ba
         return HandleResult(result);
     }
 }
-

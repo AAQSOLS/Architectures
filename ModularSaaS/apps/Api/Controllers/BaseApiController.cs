@@ -26,16 +26,6 @@ public abstract class BaseApiController : ControllerBase
         return CreateProblemResult(result.Error);
     }
 
-    protected IActionResult HandleResult<TSource, TDestination>(Result<TSource> result)
-    {
-        if (result.IsSuccess)
-        {
-            return Ok(Mapster.TypeAdapter.Adapt<TSource, TDestination>(result.Value));
-        }
-
-        return CreateProblemResult(result.Error);
-    }
-
     private ObjectResult CreateProblemResult(Error error)
     {
         var statusCode = error.Type switch

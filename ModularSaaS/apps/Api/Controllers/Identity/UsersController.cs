@@ -1,15 +1,13 @@
 using Asp.Versioning;
-using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModularSaaS.Api.Common;
-using ModularSaaS.Api.Contracts.Identity;
 using ModularSaaS.Application.Identity.Abstractions;
-using ModularSaaS.Security.AspNetCore.Authorization;
 using ModularSaaS.Application.Identity.Models;
 using ModularSaaS.Application.Identity.Permissions;
 using ModularSaaS.Application.Shared.Constants;
 using ModularSaaS.Application.Shared.Models;
+using ModularSaaS.Security.AspNetCore.Authorization;
 
 namespace ModularSaaS.Api.Controllers.Identity;
 
@@ -22,16 +20,15 @@ public sealed class UsersController(IUserService userService) : BaseApiControlle
     public async Task<IActionResult> GetCurrentUser(CancellationToken ct)
     {
         var result = await userService.GetCurrentUserAsync(ct);
-        return HandleResult<UserDetailsResult, UserDetailsResponse>(result);
+        return HandleResult(result);
     }
 
     [HttpPost(ApiRoutes.Users.Register)]
     [HasPermission(AppPermissions.Identity.UsersWrite)]
-    public async Task<IActionResult> RegisterUser([FromBody] RegisterUserRequest request, CancellationToken ct)
+    public async Task<IActionResult> RegisterUser([FromBody] RegisterUserInput input, CancellationToken ct)
     {
-        var input = request.Adapt<RegisterUserInput>();
         var result = await userService.RegisterUserAsync(input, ct);
-        return HandleResult<UserResult, UserResponse>(result);
+        return HandleResult(result);
     }
 
     [HttpGet]
@@ -43,22 +40,21 @@ public sealed class UsersController(IUserService userService) : BaseApiControlle
     {
         var page = new PageRequest(pageNumber, pageSize);
         var result = await userService.ListUsersAsync(page, ct);
-        return HandleResult<PagedResult<UserListItem>, PagedResult<UserListItemResponse>>(result);
+        return HandleResult(result);
     }
 
     [HttpPost(ApiRoutes.Users.ChangePassword)]
-    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request, CancellationToken ct)
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordInput input, CancellationToken ct)
     {
-        var input = request.Adapt<ChangePasswordInput>();
         var result = await userService.ChangePasswordAsync(input, ct);
         return HandleResult(result);
     }
 
     [HttpPost(ApiRoutes.Users.AssignRole)]
     [HasPermission(AppPermissions.Identity.RolesWrite)]
-    public async Task<IActionResult> AssignRole(Guid id, [FromBody] AssignRoleRequest request, CancellationToken ct)
+    public async Task<IActionResult> AssignRole(Guid id, [FromBody] AssignRoleInput input, CancellationToken ct)
     {
-        var result = await userService.AssignRoleAsync(id, request.RoleId, request.ExpiresAtUtc, ct);
+        var result = await userService.AssignRoleAsync(id, input.RoleId, input.ExpiresAtUtc, ct);
         return HandleResult(result);
     }
 
@@ -70,4 +66,3 @@ public sealed class UsersController(IUserService userService) : BaseApiControlle
         return HandleResult(result);
     }
 }
-
