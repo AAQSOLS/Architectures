@@ -1,7 +1,9 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-# Run lint-staged on frontend code if present
-if [ -d "ModularSaaS/apps/Web" ]; then
+# Run lint-staged on frontend Portal code if present
+if [ -d "ModularSaaS/apps/Portal" ]; then
+  cd ModularSaaS/apps/Portal && npx lint-staged
+elif [ -d "ModularSaaS/apps/Web" ]; then
   cd ModularSaaS/apps/Web && npx lint-staged
 fi

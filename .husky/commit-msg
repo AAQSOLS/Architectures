@@ -2,6 +2,8 @@
 . "$(dirname -- "$0")/_/husky.sh"
 
 # Validate commit message format with commitlint
-if [ -f "ModularSaaS/apps/Web/commitlint.config.js" ]; then
+if [ -f "ModularSaaS/apps/Portal/commitlint.config.js" ]; then
+  npx --prefix ModularSaaS/apps/Portal commitlint --config ModularSaaS/apps/Portal/commitlint.config.js --edit "$1"
+elif [ -f "ModularSaaS/apps/Web/commitlint.config.js" ]; then
   npx --prefix ModularSaaS/apps/Web commitlint --config ModularSaaS/apps/Web/commitlint.config.js --edit "$1"
 fi

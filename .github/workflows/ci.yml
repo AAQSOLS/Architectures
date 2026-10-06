@@ -32,12 +32,12 @@ jobs:
       - name: Run tests
         run: dotnet test ModularSaaS.slnx --no-build --configuration Release --verbosity normal
 
-  frontend-quality:
-    name: Frontend Quality & Build (Angular)
+  portal-quality:
+    name: Portal Quality & Build (Angular)
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ModularSaaS/apps/Web
+        working-directory: ModularSaaS/apps/Portal
 
     steps:
       - name: Checkout repository
@@ -48,7 +48,7 @@ jobs:
         with:
           node-version: '22.x'
           cache: 'npm'
-          cache-dependency-path: ModularSaaS/apps/Web/package.json
+          cache-dependency-path: ModularSaaS/apps/Portal/package.json
 
       - name: Install dependencies
         run: npm ci
