@@ -21,4 +21,16 @@
   <Folder Name="/tests/Architecture.Tests/">
     <Project Path="tests/Architecture.Tests/ModularSaaS.Architecture.Tests.csproj" />
   </Folder>
+  <Folder Name="/tests/ModularSaaS.Testing.Shared/">
+    <Project Path="tests/ModularSaaS.Testing.Shared/ModularSaaS.Testing.Shared.csproj" />
+  </Folder>
+  <Folder Name="/tests/ModularSaaS.Unit.Tests/">
+    <Project Path="tests/ModularSaaS.Unit.Tests/ModularSaaS.Unit.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/ModularSaaS.Integration.Tests/">
+    <Project Path="tests/ModularSaaS.Integration.Tests/ModularSaaS.Integration.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/ModularSaaS.Functional.Tests/">
+    <Project Path="tests/ModularSaaS.Functional.Tests/ModularSaaS.Functional.Tests.csproj" />
+  </Folder>
 </Solution>

@@ -7,8 +7,8 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build-and-test:
-    name: Build & Test
+  backend-quality:
+    name: Backend Build & Test (.NET)
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -31,3 +31,36 @@ jobs:
 
       - name: Run tests
         run: dotnet test ModularSaaS.slnx --no-build --configuration Release --verbosity normal
+
+  frontend-quality:
+    name: Frontend Quality & Build (Angular)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ModularSaaS/apps/Web
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+          cache: 'npm'
+          cache-dependency-path: ModularSaaS/apps/Web/package.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify Formatting (Prettier)
+        run: npm run format:check
+
+      - name: Run ESLint & Boundary Rules (Zero Warnings)
+        run: npm run lint
+
+      - name: TypeScript Strict Type Check
+        run: npm run typecheck
+
+      - name: Build Application (Verify Budgets)
+        run: npm run build

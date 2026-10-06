@@ -1,0 +1,23 @@
+{
+  "app.title": "Modular SaaS Portal",
+  "nav.dashboard": "Dashboard",
+  "nav.properties": "Properties",
+  "nav.leads": "Leads",
+  "nav.users": "User Management",
+  "nav.tenants": "Tenants & Organizations",
+  "nav.settings": "Settings",
+  "auth.login": "Sign In",
+  "auth.logout": "Sign Out",
+  "auth.email": "Email Address",
+  "auth.password": "Password",
+  "auth.submit": "Continue",
+  "actions.save": "Save Changes",
+  "actions.cancel": "Cancel",
+  "actions.delete": "Delete",
+  "actions.search": "Search...",
+  "status.active": "Active",
+  "status.inactive": "Inactive",
+  "errors.general": "An unexpected error occurred. Please try again.",
+  "errors.unauthorized": "Session expired. Please sign in again.",
+  "errors.forbidden": "You do not have permission to view this resource."
+}

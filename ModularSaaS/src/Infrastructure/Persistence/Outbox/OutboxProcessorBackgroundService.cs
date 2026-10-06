@@ -97,7 +97,7 @@ internal sealed class OutboxProcessorBackgroundService(
 
             try
             {
-                await DispatchMessageAsync(scope.ServiceProvider, message, stoppingToken);
+                await DispatchMessageAsync(message, stoppingToken);
                 message.ProcessedOnUtc = clock.UtcNow;
                 message.Error = null;
             }
@@ -125,7 +125,6 @@ internal sealed class OutboxProcessorBackgroundService(
     }
 
     private async Task DispatchMessageAsync(
-        IServiceProvider serviceProvider,
         OutboxMessage message,
         CancellationToken cancellationToken)
     {
@@ -135,8 +134,20 @@ internal sealed class OutboxProcessorBackgroundService(
         var domainEvent = JsonSerializer.Deserialize(message.Content, eventType, SerializerOptions)
             ?? throw new InvalidOperationException($"Failed to deserialize outbox message {message.Id} to type '{eventType.FullName}'.");
 
+        using var messageScope = scopeFactory.CreateScope();
+        var tenantSetter = messageScope.ServiceProvider.GetRequiredService<ITenantSetter>();
+
+        if (domainEvent is ITenantEvent tenantEvent)
+        {
+            tenantSetter.SetTenant(tenantEvent.TenantId);
+        }
+        else
+        {
+            tenantSetter.SetTenant(null, isPlatformScope: true);
+        }
+
         var handlerInterfaceType = typeof(IDomainEventHandler<>).MakeGenericType(eventType);
-        var handlers = serviceProvider.GetServices(handlerInterfaceType).ToList();
+        var handlers = messageScope.ServiceProvider.GetServices(handlerInterfaceType).ToList();
 
         if (handlers.Count == 0)
         {

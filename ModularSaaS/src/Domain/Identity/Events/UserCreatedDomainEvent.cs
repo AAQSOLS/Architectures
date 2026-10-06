@@ -1,7 +1,9 @@
+using System.Text.Json.Serialization;
 using ModularSaaS.Domain.Shared;
 
 namespace ModularSaaS.Domain.Identity.Events;
 
+[method: JsonConstructor]
 public sealed record UserCreatedDomainEvent(
     Guid UserId,
     Guid TenantId,
@@ -9,7 +11,7 @@ public sealed record UserCreatedDomainEvent(
     string FirstName,
     string LastName,
     Guid EventId,
-    DateTimeOffset OccurredOnUtc) : IDomainEvent
+    DateTimeOffset OccurredOnUtc) : ITenantEvent
 {
     public UserCreatedDomainEvent(
         Guid userId,

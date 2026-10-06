@@ -1,0 +1,182 @@
+{
+  "root": true,
+  "ignorePatterns": [
+    "projects/**/*",
+    "dist/**/*",
+    "node_modules/**/*"
+  ],
+  "settings": {
+    "boundaries/elements": [
+      {
+        "type": "core",
+        "pattern": "src/app/core/**/*",
+        "mode": "folder"
+      },
+      {
+        "type": "shared",
+        "pattern": "src/app/shared/**/*",
+        "mode": "folder"
+      },
+      {
+        "type": "features",
+        "pattern": "src/app/features/*/**/*",
+        "mode": "folder",
+        "capture": ["featureName"]
+      }
+    ],
+    "boundaries/ignore": [
+      "**/*.spec.ts"
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["*.ts"],
+      "parser": "@typescript-eslint/parser",
+      "parserOptions": {
+        "project": ["tsconfig.app.json"],
+        "createDefaultProgram": false
+      },
+      "plugins": [
+        "@typescript-eslint",
+        "@angular-eslint",
+        "sonarjs",
+        "boundaries",
+        "security"
+      ],
+      "rules": {
+        /* ========================================================
+           1. ZERO-TOLERANCE TYPESCRIPT STRICTNESS
+           ======================================================== */
+        "@typescript-eslint/no-explicit-any": "error",
+        "@typescript-eslint/no-unused-vars": [
+          "error",
+          {
+            "argsIgnorePattern": "^_",
+            "varsIgnorePattern": "^_",
+            "caughtErrorsIgnorePattern": "^_"
+          }
+        ],
+        "@typescript-eslint/no-floating-promises": "error",
+        "@typescript-eslint/no-misused-promises": "error",
+        "@typescript-eslint/no-unnecessary-type-assertion": "error",
+        "@typescript-eslint/prefer-nullish-coalescing": "error",
+        "@typescript-eslint/prefer-optional-chain": "error",
+        "@typescript-eslint/consistent-type-definitions": ["error", "interface"],
+
+        /* ========================================================
+           2. BANNED SYMBOLS & INSECURE IMPORTS
+           ======================================================== */
+        "@typescript-eslint/no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "@angular/platform-browser",
+                "importNames": [
+                  "DomSanitizer",
+                  "bypassSecurityTrustHtml",
+                  "bypassSecurityTrustScript",
+                  "bypassSecurityTrustStyle",
+                  "bypassSecurityTrustUrl",
+                  "bypassSecurityTrustResourceUrl"
+                ],
+                "message": "Direct bypass of Angular sanitization is strictly forbidden. Use audited template bindings or verified utilities."
+              },
+              {
+                "name": "rxjs",
+                "importNames": ["toPromise"],
+                "message": "toPromise() is deprecated in RxJS. Use firstValueFrom() or lastValueFrom()."
+              }
+            ],
+            "patterns": [
+              {
+                "group": ["../*/*/*"],
+                "message": "Deep relative imports are prohibited. Use path aliases (@core/*, @shared/*, @features/*)."
+              }
+            ]
+          }
+        ],
+
+        /* ========================================================
+           3. ARCHITECTURAL BOUNDARY ENFORCEMENT
+           ======================================================== */
+        "boundaries/element-types": [
+          "error",
+          {
+            "default": "disallow",
+            "rules": [
+              {
+                "from": ["features"],
+                "allow": ["core", "shared"]
+              },
+              {
+                "from": ["shared"],
+                "allow": ["shared"]
+              },
+              {
+                "from": ["core"],
+                "allow": ["core", "shared"]
+              }
+            ]
+          }
+        ],
+        "boundaries/entry-point": [
+          "error",
+          {
+            "default": "allow"
+          }
+        ],
+
+        /* ========================================================
+           4. SONARJS STATIC CODE ANALYSIS
+           ======================================================== */
+        "sonarjs/cognitive-complexity": ["error", 15],
+        "sonarjs/no-duplicate-string": ["error", { "threshold": 4 }],
+        "sonarjs/no-identical-functions": "error",
+        "sonarjs/no-redundant-boolean": "error",
+        "sonarjs/no-unused-collection": "error",
+        "sonarjs/no-useless-catch": "error",
+        "sonarjs/prefer-immediate-return": "error",
+        "sonarjs/no-inverted-boolean-check": "error",
+
+        /* ========================================================
+           5. SECURITY STATIC AUDITING
+           ======================================================== */
+        "security/detect-unsafe-regex": "error",
+        "security/detect-buffer-noassert": "error",
+        "security/detect-eval-with-expression": "error",
+        "security/detect-no-csrf-before-method-override": "error",
+        "security/detect-possible-timing-attacks": "error",
+        "security/detect-pseudoRandomBytes": "error",
+
+        /* ========================================================
+           6. ANGULAR FRAMEWORK STANDARDS
+           ======================================================== */
+        "@angular-eslint/prefer-standalone": "error",
+        "@angular-eslint/component-class-suffix": "error",
+        "@angular-eslint/directive-class-suffix": "error",
+        "@angular-eslint/no-empty-lifecycle-method": "error",
+        "@angular-eslint/use-lifecycle-interface": "error",
+        "@angular-eslint/no-output-on-prefix": "error",
+        "@angular-eslint/no-input-rename": "error",
+        "@angular-eslint/no-output-rename": "error"
+      }
+    },
+    {
+      "files": ["*.html"],
+      "parser": "@angular-eslint/template-parser",
+      "plugins": ["@angular-eslint/template"],
+      "rules": {
+        /* ========================================================
+           7. TEMPLATE ACCESSIBILITY & BEST PRACTICES
+           ======================================================== */
+        "@angular-eslint/template/button-has-type": "error",
+        "@angular-eslint/template/alt-text": "error",
+        "@angular-eslint/template/elements-content": "error",
+        "@angular-eslint/template/no-negated-async": "error",
+        "@angular-eslint/template/no-duplicate-attributes": "error",
+        "@angular-eslint/template/cyclomatic-complexity": ["error", { "maxComplexity": 10 }]
+      }
+    }
+  ]
+}

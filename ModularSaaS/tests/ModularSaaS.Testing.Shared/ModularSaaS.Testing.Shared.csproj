@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>ModularSaaS.Testing.Shared</RootNamespace>
+    <AssemblyName>ModularSaaS.Testing.Shared</AssemblyName>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>false</IsTestProject>
+    <NoWarn>$(NoWarn);CA1031;CA2100;S4581;CA1707;CA2007;CS1591;IDE0005</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="xunit" />
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="NSubstitute" />
+    <PackageReference Include="Bogus" />
+    <PackageReference Include="Testcontainers.MsSql" />
+    <PackageReference Include="SSH.NET" />
+    <PackageReference Include="Respawn" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\apps\Api\ModularSaaS.Api.csproj" />
+    <ProjectReference Include="..\..\src\Infrastructure\ModularSaaS.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\Application\ModularSaaS.Application.csproj" />
+    <ProjectReference Include="..\..\src\Domain\ModularSaaS.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Common\ModularSaaS.Security\ModularSaaS.Security.csproj" />
+  </ItemGroup>
+
+</Project>

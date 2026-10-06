@@ -38,13 +38,10 @@ internal sealed class RoleRepository(AppDbContext dbContext)
 
     public async Task SetRolePermissionsAsync(Guid roleId, IEnumerable<Guid> permissionIds, CancellationToken ct = default)
     {
-        var existing = await DbContext.RolePermissions
-            .Where(rp => rp.RoleId == roleId)
-            .ToListAsync(ct);
+        var role = await DbContext.Roles
+            .Include(r => r.Permissions)
+            .FirstOrDefaultAsync(r => r.Id == roleId, ct);
 
-        DbContext.RolePermissions.RemoveRange(existing);
-
-        var newEntries = permissionIds.Select(pid => new RolePermission(roleId, pid));
-        await DbContext.RolePermissions.AddRangeAsync(newEntries, ct);
+        role?.SetPermissions(permissionIds);
     }
 }

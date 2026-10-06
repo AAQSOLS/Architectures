@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi;
+using ModularSaaS.Api.Common;
 using ModularSaaS.Application.Shared.Constants;
 
 namespace ModularSaaS.Api.Transformers;
@@ -9,7 +10,7 @@ internal sealed class TenantHeaderOperationTransformer : IOpenApiOperationTransf
     public Task TransformAsync(OpenApiOperation operation, OpenApiOperationTransformerContext context, CancellationToken cancellationToken)
     {
         var path = context.Description.RelativePath ?? string.Empty;
-        if (!path.Contains("platform", StringComparison.OrdinalIgnoreCase))
+        if (!path.Contains(ApiRoutes.PlatformSegment, StringComparison.OrdinalIgnoreCase))
         {
             operation.Parameters ??= [];
             operation.Parameters.Add(new OpenApiParameter

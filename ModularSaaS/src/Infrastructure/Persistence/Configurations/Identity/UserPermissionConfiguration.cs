@@ -16,7 +16,7 @@ internal sealed class UserPermissionConfiguration : IEntityTypeConfiguration<Use
             .IsRequired();
 
         builder.HasOne(up => up.User)
-            .WithMany()
+            .WithMany(u => u.Permissions)
             .HasForeignKey(up => up.UserId)
             .IsRequired(false)
             .OnDelete(DeleteBehavior.Cascade);

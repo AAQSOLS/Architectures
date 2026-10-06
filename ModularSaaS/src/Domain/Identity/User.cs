@@ -1,25 +1,33 @@
 using ModularSaaS.Domain.Identity.Enums;
 using ModularSaaS.Domain.Identity.Events;
+using ModularSaaS.Domain.Identity.ValueObjects;
 using ModularSaaS.Domain.Shared;
+using ModularSaaS.Domain.Shared.ValueObjects;
+using EmailVo = ModularSaaS.Domain.Shared.ValueObjects.Email;
 
 namespace ModularSaaS.Domain.Identity;
 
 public class User : AuditableEntity, ITenantEntity, IAggregateRoot
 {
+    private readonly List<UserRole> _roles = [];
+    private readonly List<UserPermission> _permissions = [];
+
     private User()
     {
     }
 
     public User(Guid tenantId, string email, string passwordHash, string firstName, string lastName)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(email);
         ArgumentException.ThrowIfNullOrWhiteSpace(passwordHash);
 
+        var validEmail = EmailVo.Create(email);
+        var fullName = FullName.Create(firstName, lastName);
+
         TenantId = tenantId;
-        Email = email.Trim().ToLowerInvariant();
+        Email = validEmail.Value;
         PasswordHash = passwordHash;
-        FirstName = firstName.Trim();
-        LastName = lastName.Trim();
+        FirstName = fullName.FirstName;
+        LastName = fullName.LastName;
         Status = UserStatus.Active;
         EmailConfirmed = false;
         AccessFailedCount = 0;
@@ -47,13 +55,80 @@ public class User : AuditableEntity, ITenantEntity, IAggregateRoot
 
     public DateTimeOffset? LastLoginAtUtc { get; private set; }
 
+    public UserId UserId => UserId.From(Id);
+
+    public EmailVo ToEmail() => EmailVo.Create(Email);
+
+    public FullName ToFullName() => FullName.Create(FirstName, LastName);
+
+    public IReadOnlyCollection<UserRole> Roles => _roles.AsReadOnly();
+
+    public IReadOnlyCollection<UserPermission> Permissions => _permissions.AsReadOnly();
+
+    public void AssignRole(Guid roleId, DateTimeOffset now, Guid? assignedBy = null, DateTimeOffset? expiresAtUtc = null)
+    {
+        if (Status != UserStatus.Active)
+        {
+            throw new InvalidOperationException($"Cannot assign roles to a user in '{Status}' status.");
+        }
+
+        var existing = _roles.Find(r => r.RoleId == roleId);
+        if (existing is not null)
+        {
+            if (!existing.IsExpired(now))
+            {
+                return;
+            }
+
+            _roles.Remove(existing);
+        }
+
+        _roles.Add(new UserRole(Id, roleId, now, assignedBy, expiresAtUtc));
+        RaiseDomainEvent(new UserRoleAssignedDomainEvent(Id, TenantId, roleId));
+    }
+
+    public void RemoveRole(Guid roleId)
+    {
+        var existing = _roles.Find(r => r.RoleId == roleId);
+        if (existing is not null)
+        {
+            _roles.Remove(existing);
+            RaiseDomainEvent(new UserRoleRemovedDomainEvent(Id, TenantId, roleId));
+        }
+    }
+
+    public void SetDirectPermission(Guid permissionId, bool isGranted)
+    {
+        if (Status != UserStatus.Active)
+        {
+            throw new InvalidOperationException($"Cannot modify permissions for a user in '{Status}' status.");
+        }
+
+        var existing = _permissions.Find(p => p.PermissionId == permissionId);
+        if (existing is not null)
+        {
+            existing.SetGranted(isGranted);
+        }
+        else
+        {
+            _permissions.Add(new UserPermission(Id, permissionId, isGranted));
+        }
+
+        RaiseDomainEvent(new UserPermissionChangedDomainEvent(Id, TenantId, permissionId, isGranted));
+    }
+
     public void UpdateProfile(string firstName, string lastName)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(firstName);
-        ArgumentException.ThrowIfNullOrWhiteSpace(lastName);
+        var fullName = FullName.Create(firstName, lastName);
+        FirstName = fullName.FirstName;
+        LastName = fullName.LastName;
+    }
 
-        FirstName = firstName.Trim();
-        LastName = lastName.Trim();
+    public void UpdateProfile(FullName fullName)
+    {
+        ArgumentNullException.ThrowIfNull(fullName);
+        FirstName = fullName.FirstName;
+        LastName = fullName.LastName;
     }
 
     public void SetPasswordHash(string newHash)

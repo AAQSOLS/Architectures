@@ -1,0 +1,106 @@
+/**
+ * ModularSaaS Design System - Semantic Theme Layer
+ * Maps raw tokens to semantic UI intents for Light & Dark modes.
+ * Maps seamlessly to PrimeNG tokens so components inherit the theme automatically.
+ */
+
+/* ========================================================
+   LIGHT THEME (Default)
+   ======================================================== */
+:root,
+[data-theme="light"] {
+  /* Semantic Brand Colors */
+  --color-primary: var(--tenant-color-primary, var(--primitive-indigo-600));
+  --color-primary-hover: var(--primitive-indigo-700);
+  --color-primary-subtle: var(--primitive-indigo-50);
+  --color-primary-text: #ffffff;
+
+  /* Semantic Surfaces */
+  --color-surface-ground: var(--primitive-slate-50);
+  --color-surface-card: #ffffff;
+  --color-surface-overlay: #ffffff;
+  --color-surface-hover: var(--primitive-slate-100);
+  --color-surface-border: var(--primitive-slate-200);
+
+  /* Semantic Typography */
+  --color-text-primary: var(--primitive-slate-900);
+  --color-text-secondary: var(--primitive-slate-500);
+  --color-text-muted: var(--primitive-slate-400);
+
+  /* Feedback Colors */
+  --color-success: var(--primitive-emerald-600);
+  --color-success-bg: #ecfdf5;
+  --color-warning: var(--primitive-amber-600);
+  --color-warning-bg: #fffbeb;
+  --color-danger: var(--primitive-rose-600);
+  --color-danger-bg: #fff1f2;
+  --color-info: var(--primitive-sky-600);
+  --color-info-bg: #f0f9ff;
+
+  /* PrimeNG Token Bridge (Light) */
+  --p-primary-color: var(--color-primary);
+  --p-primary-hover-color: var(--color-primary-hover);
+  --p-primary-contrast-color: var(--color-primary-text);
+  --p-surface-0: #ffffff;
+  --p-surface-50: var(--primitive-slate-50);
+  --p-surface-100: var(--primitive-slate-100);
+  --p-surface-200: var(--primitive-slate-200);
+  --p-surface-300: var(--primitive-slate-300);
+  --p-surface-400: var(--primitive-slate-400);
+  --p-surface-500: var(--primitive-slate-500);
+  --p-surface-600: var(--primitive-slate-600);
+  --p-surface-700: var(--primitive-slate-700);
+  --p-surface-800: var(--primitive-slate-800);
+  --p-surface-900: var(--primitive-slate-900);
+  --p-surface-950: var(--primitive-slate-950);
+  --p-text-color: var(--color-text-primary);
+  --p-text-muted-color: var(--color-text-secondary);
+}
+
+/* ========================================================
+   DARK THEME
+   ======================================================== */
+[data-theme="dark"],
+.app-dark {
+  /* Semantic Brand Colors */
+  --color-primary: var(--tenant-color-primary, var(--primitive-indigo-500));
+  --color-primary-hover: var(--primitive-indigo-400);
+  --color-primary-subtle: rgba(99, 102, 241, 0.15);
+  --color-primary-text: #ffffff;
+
+  /* Semantic Surfaces */
+  --color-surface-ground: var(--primitive-slate-950);
+  --color-surface-card: var(--primitive-slate-900);
+  --color-surface-overlay: var(--primitive-slate-800);
+  --color-surface-hover: var(--primitive-slate-800);
+  --color-surface-border: var(--primitive-slate-800);
+
+  /* Semantic Typography */
+  --color-text-primary: var(--primitive-slate-100);
+  --color-text-secondary: var(--primitive-slate-400);
+  --color-text-muted: var(--primitive-slate-500);
+
+  /* Feedback Colors (Dark Mode calibrated) */
+  --color-success: var(--primitive-emerald-500);
+  --color-success-bg: rgba(16, 185, 129, 0.15);
+  --color-warning: var(--primitive-amber-500);
+  --color-warning-bg: rgba(245, 158, 11, 0.15);
+  --color-danger: var(--primitive-rose-500);
+  --color-danger-bg: rgba(244, 63, 94, 0.15);
+  --color-info: var(--primitive-sky-500);
+  --color-info-bg: rgba(14, 165, 233, 0.15);
+
+  /* PrimeNG Token Bridge (Dark) */
+  --p-primary-color: var(--color-primary);
+  --p-primary-hover-color: var(--color-primary-hover);
+  --p-primary-contrast-color: var(--color-primary-text);
+  --p-surface-0: var(--primitive-slate-950);
+  --p-surface-50: var(--primitive-slate-900);
+  --p-surface-100: var(--primitive-slate-800);
+  --p-surface-200: var(--primitive-slate-700);
+  --p-surface-800: var(--primitive-slate-200);
+  --p-surface-900: var(--primitive-slate-100);
+  --p-surface-950: #ffffff;
+  --p-text-color: var(--color-text-primary);
+  --p-text-muted-color: var(--color-text-secondary);
+}

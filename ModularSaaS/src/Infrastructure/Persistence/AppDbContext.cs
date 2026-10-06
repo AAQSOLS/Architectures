@@ -13,8 +13,14 @@ internal class AppDbContext(
     DbContextOptions<AppDbContext> options,
     ITenantContext tenantContext) : DbContext(options)
 {
-    private static readonly MethodInfo SetQueryFilterMethod = typeof(AppDbContext)
-        .GetMethod(nameof(SetQueryFilter), BindingFlags.NonPublic | BindingFlags.Instance)!;
+    private static readonly MethodInfo SetTenantAndSoftDeleteQueryFilterMethod = typeof(AppDbContext)
+        .GetMethod(nameof(SetTenantAndSoftDeleteQueryFilter), BindingFlags.NonPublic | BindingFlags.Instance)!;
+
+    private static readonly MethodInfo SetTenantOnlyQueryFilterMethod = typeof(AppDbContext)
+        .GetMethod(nameof(SetTenantOnlyQueryFilter), BindingFlags.NonPublic | BindingFlags.Instance)!;
+
+    private static readonly MethodInfo SetSoftDeleteOnlyQueryFilterMethod = typeof(AppDbContext)
+        .GetMethod(nameof(SetSoftDeleteOnlyQueryFilter), BindingFlags.NonPublic | BindingFlags.Static)!;
 
     public DbSet<Tenant> Tenants => Set<Tenant>();
 
@@ -44,16 +50,49 @@ internal class AppDbContext(
 
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
 
-        foreach (var entityType in modelBuilder.Model.GetEntityTypes().Where(e => typeof(ITenantEntity).IsAssignableFrom(e.ClrType)))
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {
-            var genericMethod = SetQueryFilterMethod.MakeGenericMethod(entityType.ClrType);
-            genericMethod.Invoke(this, [modelBuilder]);
+            if (entityType.BaseType is not null || entityType.IsOwned())
+            {
+                continue;
+            }
+
+            var clrType = entityType.ClrType;
+            var isTenant = typeof(ITenantEntity).IsAssignableFrom(clrType);
+            var isSoftDelete = typeof(ISoftDeletable).IsAssignableFrom(clrType);
+
+            if (isTenant && isSoftDelete)
+            {
+                SetTenantAndSoftDeleteQueryFilterMethod.MakeGenericMethod(clrType).Invoke(this, [modelBuilder]);
+            }
+            else if (isTenant)
+            {
+                SetTenantOnlyQueryFilterMethod.MakeGenericMethod(clrType).Invoke(this, [modelBuilder]);
+            }
+            else if (isSoftDelete)
+            {
+                SetSoftDeleteOnlyQueryFilterMethod.MakeGenericMethod(clrType).Invoke(null, [modelBuilder]);
+            }
         }
     }
 
-    private void SetQueryFilter<TEntity>(ModelBuilder modelBuilder) where TEntity : class, ITenantEntity
+    private void SetTenantAndSoftDeleteQueryFilter<TEntity>(ModelBuilder modelBuilder)
+        where TEntity : class, ITenantEntity, ISoftDeletable
+    {
+        modelBuilder.Entity<TEntity>().HasQueryFilter(e =>
+            !e.IsDeleted && (tenantContext.IsPlatformScope || e.TenantId == tenantContext.TenantId));
+    }
+
+    private void SetTenantOnlyQueryFilter<TEntity>(ModelBuilder modelBuilder)
+        where TEntity : class, ITenantEntity
     {
         modelBuilder.Entity<TEntity>().HasQueryFilter(e =>
             tenantContext.IsPlatformScope || e.TenantId == tenantContext.TenantId);
+    }
+
+    private static void SetSoftDeleteOnlyQueryFilter<TEntity>(ModelBuilder modelBuilder)
+        where TEntity : class, ISoftDeletable
+    {
+        modelBuilder.Entity<TEntity>().HasQueryFilter(e => !e.IsDeleted);
     }
 }

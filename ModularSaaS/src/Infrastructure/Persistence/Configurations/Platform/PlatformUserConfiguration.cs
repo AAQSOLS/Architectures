@@ -17,7 +17,8 @@ internal sealed class PlatformUserConfiguration : IEntityTypeConfiguration<Platf
             .HasMaxLength(256);
 
         builder.HasIndex(pu => pu.Email)
-            .IsUnique();
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0");
 
         builder.Property(pu => pu.PasswordHash)
             .IsRequired()

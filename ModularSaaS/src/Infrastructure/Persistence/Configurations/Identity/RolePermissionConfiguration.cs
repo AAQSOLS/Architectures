@@ -13,7 +13,7 @@ internal sealed class RolePermissionConfiguration : IEntityTypeConfiguration<Rol
         builder.HasKey(rp => new { rp.RoleId, rp.PermissionId });
 
         builder.HasOne(rp => rp.Role)
-            .WithMany()
+            .WithMany(r => r.Permissions)
             .HasForeignKey(rp => rp.RoleId)
             .IsRequired(false)
             .OnDelete(DeleteBehavior.Cascade);

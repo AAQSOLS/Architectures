@@ -73,6 +73,7 @@ public static class DependencyInjection
         services.AddScoped<TenantContext>();
         services.AddScoped<ITenantContext>(sp => sp.GetRequiredService<TenantContext>());
         services.AddScoped<ITenantSetter>(sp => sp.GetRequiredService<TenantContext>());
+        services.AddScoped<ITenantLookupService, CachedTenantLookupService>();
 
         services.AddSingleton<PermissionCache>();
         services.AddSingleton<IPermissionCache>(sp => sp.GetRequiredService<PermissionCache>());
@@ -85,6 +86,7 @@ public static class DependencyInjection
 
         // 3. Interceptors
         services.AddScoped<TenantInterceptor>();
+        services.AddScoped<SoftDeleteInterceptor>();
         services.AddScoped<AuditInterceptor>();
         services.AddScoped<OutboxInterceptor>();
 
@@ -98,8 +100,10 @@ public static class DependencyInjection
         services.AddDbContext<AppDbContext>((sp, options) =>
         {
             options.UseSqlServer(connectionString);
+            options.ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
             options.AddInterceptors(
                 sp.GetRequiredService<TenantInterceptor>(),
+                sp.GetRequiredService<SoftDeleteInterceptor>(),
                 sp.GetRequiredService<AuditInterceptor>(),
                 sp.GetRequiredService<OutboxInterceptor>());
         });

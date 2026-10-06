@@ -9,6 +9,10 @@ internal static class ProblemDetailsConstants
     public const string TenantRequiredTitle = "Tenant Required";
     public const string TenantRequiredType = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.1";
 
+    public const string TenantInactiveTitle = "Tenant Inactive or Not Found";
+    public const string TenantInactiveDetail = "The specified tenant does not exist or is inactive.";
+    public const string TenantInactiveType = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.3";
+
     public const string ValidationTitle = "Validation Failed";
     public const string ValidationType = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.1";
 

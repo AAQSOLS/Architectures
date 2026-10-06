@@ -1,0 +1,16 @@
+{
+  "*.ts": [
+    "eslint --fix --max-warnings 0",
+    "prettier --write"
+  ],
+  "*.html": [
+    "eslint --fix --max-warnings 0",
+    "prettier --write"
+  ],
+  "*.css": [
+    "prettier --write"
+  ],
+  "*.json": [
+    "prettier --write"
+  ]
+}

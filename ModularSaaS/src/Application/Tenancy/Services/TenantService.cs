@@ -14,6 +14,7 @@ namespace ModularSaaS.Application.Tenancy.Services;
 internal sealed class TenantService(
     ITenantRepository tenantRepository,
     IUserRegistrationService userRegistrationService,
+    ITenantLookupService tenantLookupService,
     IUnitOfWork unitOfWork,
     IValidator<CreateTenantInput> createTenantValidator) : ITenantService
 {
@@ -90,6 +91,7 @@ internal sealed class TenantService(
 
         tenant.Suspend();
         await unitOfWork.SaveChangesAsync(ct);
+        await tenantLookupService.InvalidateAsync(id, ct);
         return Result.Success();
     }
 
@@ -103,6 +105,7 @@ internal sealed class TenantService(
 
         tenant.Activate();
         await unitOfWork.SaveChangesAsync(ct);
+        await tenantLookupService.InvalidateAsync(id, ct);
         return Result.Success();
     }
 }

@@ -1,5 +1,7 @@
 using ModularSaaS.Domain.Identity.Enums;
 using ModularSaaS.Domain.Shared;
+using ModularSaaS.Domain.Shared.ValueObjects;
+using EmailVo = ModularSaaS.Domain.Shared.ValueObjects.Email;
 
 namespace ModularSaaS.Domain.Platform;
 
@@ -11,15 +13,21 @@ public class PlatformUser : AuditableEntity, IAggregateRoot
 
     public PlatformUser(string email, string passwordHash, string firstName, string lastName)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(email);
         ArgumentException.ThrowIfNullOrWhiteSpace(passwordHash);
 
-        Email = email.Trim().ToLowerInvariant();
+        var validEmail = EmailVo.Create(email);
+        var fullName = FullName.Create(firstName, lastName);
+
+        Email = validEmail.Value;
         PasswordHash = passwordHash;
-        FirstName = firstName.Trim();
-        LastName = lastName.Trim();
+        FirstName = fullName.FirstName;
+        LastName = fullName.LastName;
         Status = UserStatus.Active;
     }
+
+    public EmailVo ToEmail() => EmailVo.Create(Email);
+
+    public FullName ToFullName() => FullName.Create(FirstName, LastName);
 
     public string Email { get; private set; } = string.Empty;
 

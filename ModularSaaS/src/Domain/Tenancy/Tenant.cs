@@ -1,5 +1,7 @@
 using ModularSaaS.Domain.Shared;
 using ModularSaaS.Domain.Tenancy.Enums;
+using ModularSaaS.Domain.Tenancy.Events;
+using ModularSaaS.Domain.Tenancy.ValueObjects;
 
 namespace ModularSaaS.Domain.Tenancy;
 
@@ -12,12 +14,14 @@ public class Tenant : AuditableEntity, IAggregateRoot
     public Tenant(string name, string identifier, TenantPlan plan = TenantPlan.Free)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
-        ArgumentException.ThrowIfNullOrWhiteSpace(identifier);
+        var validIdentifier = TenantIdentifier.Create(identifier);
 
         Name = name.Trim();
-        Identifier = identifier.Trim().ToLowerInvariant();
+        Identifier = validIdentifier.Value;
         Plan = plan;
         Status = TenantStatus.Active;
+
+        RaiseDomainEvent(new TenantCreatedDomainEvent(Id, Identifier, Plan));
     }
 
     public Tenant(Guid id, string name, string identifier, TenantPlan plan = TenantPlan.Free)
@@ -25,6 +29,8 @@ public class Tenant : AuditableEntity, IAggregateRoot
     {
         Id = id;
     }
+
+    public TenantIdentifier ToTenantIdentifier() => TenantIdentifier.Create(Identifier);
 
     public string Name { get; private set; } = string.Empty;
 
@@ -36,17 +42,29 @@ public class Tenant : AuditableEntity, IAggregateRoot
 
     public void Activate()
     {
-        Status = TenantStatus.Active;
+        if (Status != TenantStatus.Active)
+        {
+            Status = TenantStatus.Active;
+            RaiseDomainEvent(new TenantStatusChangedDomainEvent(Id, Status));
+        }
     }
 
     public void Suspend()
     {
-        Status = TenantStatus.Suspended;
+        if (Status != TenantStatus.Suspended)
+        {
+            Status = TenantStatus.Suspended;
+            RaiseDomainEvent(new TenantStatusChangedDomainEvent(Id, Status));
+        }
     }
 
     public void ChangePlan(TenantPlan newPlan)
     {
-        Plan = newPlan;
+        if (Plan != newPlan)
+        {
+            Plan = newPlan;
+            RaiseDomainEvent(new TenantPlanChangedDomainEvent(Id, Plan));
+        }
     }
 
     public void UpdateName(string newName)

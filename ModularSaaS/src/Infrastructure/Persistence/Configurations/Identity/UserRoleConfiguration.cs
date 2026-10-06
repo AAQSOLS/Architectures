@@ -16,7 +16,7 @@ internal sealed class UserRoleConfiguration : IEntityTypeConfiguration<UserRole>
             .IsRequired();
 
         builder.HasOne(ur => ur.User)
-            .WithMany()
+            .WithMany(u => u.Roles)
             .HasForeignKey(ur => ur.UserId)
             .IsRequired(false)
             .OnDelete(DeleteBehavior.Cascade);

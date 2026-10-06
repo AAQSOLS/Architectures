@@ -1,0 +1,23 @@
+{
+  "app.title": "ماڈیولر ساس پورٹل",
+  "nav.dashboard": "ڈیش بورڈ",
+  "nav.properties": "جائیدادیں",
+  "nav.leads": "لیڈز اور رابطے",
+  "nav.users": "صارفین کا انتظام",
+  "nav.tenants": "ادارے اور تنظیمیں",
+  "nav.settings": "سیٹنگز",
+  "auth.login": "لاگ ان کریں",
+  "auth.logout": "لاگ آؤٹ",
+  "auth.email": "ای میل پتہ",
+  "auth.password": "پاس ورڈ",
+  "auth.submit": "جاری رکھیں",
+  "actions.save": "تبدیلیاں محفوظ کریں",
+  "actions.cancel": "منسوخ کریں",
+  "actions.delete": "حذف کریں",
+  "actions.search": "تلاش کریں...",
+  "status.active": "فعال",
+  "status.inactive": "غیر فعال",
+  "errors.general": "کوئی غیر متوقع خرابی پیش آگئی ہے۔ براہ کرم دوبارہ کوشش کریں۔",
+  "errors.unauthorized": "آپ کی نشست ختم ہو چکی ہے۔ براہ کرم دوبارہ لاگ ان کریں۔",
+  "errors.forbidden": "آپ کے پاس اس صفحے تک رسائی کی اجازت نہیں ہے۔"
+}

@@ -21,7 +21,8 @@ internal sealed class TenantConfiguration : IEntityTypeConfiguration<Tenant>
             .HasMaxLength(100);
 
         builder.HasIndex(t => t.Identifier)
-            .IsUnique();
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0");
 
         builder.Property(t => t.Status)
             .IsRequired();

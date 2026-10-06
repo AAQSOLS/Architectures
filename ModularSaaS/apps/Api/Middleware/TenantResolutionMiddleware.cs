@@ -1,17 +1,23 @@
+using System.Text.Json;
+using Microsoft.AspNetCore.Mvc;
 using ModularSaaS.Api.Common;
 using ModularSaaS.Application.Shared.Abstractions;
 using ModularSaaS.Application.Shared.Constants;
+using ModularSaaS.Application.Tenancy.Abstractions;
 
 namespace ModularSaaS.Api.Middleware;
 
 internal sealed class TenantResolutionMiddleware(RequestDelegate next)
 {
-    public async Task InvokeAsync(HttpContext context, ITenantSetter tenantSetter)
+    public async Task InvokeAsync(
+        HttpContext context,
+        ITenantSetter tenantSetter,
+        ITenantLookupService tenantLookupService)
     {
         var path = context.Request.Path.Value ?? string.Empty;
 
         // Platform endpoints operate in platform scope
-        if (path.StartsWith(ApiRoutes.PlatformPrefix, StringComparison.OrdinalIgnoreCase))
+        if (path.Contains(ApiRoutes.PlatformPathSegment, StringComparison.OrdinalIgnoreCase))
         {
             tenantSetter.SetTenant(null, isPlatformScope: true);
             await next(context);
@@ -36,7 +42,29 @@ internal sealed class TenantResolutionMiddleware(RequestDelegate next)
             tenantId = headerTenantId;
         }
 
-        // 3. Resolve impersonation state from JWT claims
+        // 3. Verify tenant existence and active status
+        if (tenantId.HasValue)
+        {
+            var isTenantActive = await tenantLookupService.IsTenantActiveAsync(tenantId.Value, context.RequestAborted);
+            if (!isTenantActive)
+            {
+                context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                context.Response.ContentType = ProblemDetailsConstants.ContentType;
+
+                var problem = new ProblemDetails
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    Title = ProblemDetailsConstants.TenantInactiveTitle,
+                    Detail = ProblemDetailsConstants.TenantInactiveDetail,
+                    Type = ProblemDetailsConstants.TenantInactiveType
+                };
+
+                await context.Response.WriteAsync(JsonSerializer.Serialize(problem), context.RequestAborted);
+                return;
+            }
+        }
+
+        // 4. Resolve impersonation state from JWT claims
         var isImpersonated = string.Equals(context.User.FindFirst(AppClaimTypes.IsImpersonated)?.Value, AppClaimValues.True, StringComparison.OrdinalIgnoreCase);
         Guid? impersonatedBy = null;
         if (isImpersonated)

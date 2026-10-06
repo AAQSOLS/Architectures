@@ -2,8 +2,10 @@ namespace ModularSaaS.Api.Common;
 
 public static class ApiRoutes
 {
+    public const string PlatformSegment = "platform";
+    public const string PlatformPathSegment = "/platform";
     public const string VersionPrefix = "api/v{version:apiVersion}";
-    public const string PlatformPrefix = $"{VersionPrefix}/platform";
+    public const string PlatformPrefix = $"{VersionPrefix}/{PlatformSegment}";
 
     public static class Auth
     {

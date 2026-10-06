@@ -44,25 +44,20 @@ internal sealed class UserRepository(AppDbContext dbContext, IClock clock)
 
     public async Task AssignRoleAsync(Guid userId, Guid roleId, Guid? assignedBy = null, DateTimeOffset? expiresAtUtc = null, CancellationToken ct = default)
     {
-        var existing = await DbContext.UserRoles
-            .FirstOrDefaultAsync(ur => ur.UserId == userId && ur.RoleId == roleId, ct);
+        var user = await DbContext.Users
+            .Include(u => u.Roles)
+            .FirstOrDefaultAsync(u => u.Id == userId, ct);
 
-        if (existing is null)
-        {
-            var userRole = new UserRole(userId, roleId, clock.UtcNow, assignedBy, expiresAtUtc);
-            await DbContext.UserRoles.AddAsync(userRole, ct);
-        }
+        user?.AssignRole(roleId, clock.UtcNow, assignedBy, expiresAtUtc);
     }
 
     public async Task RemoveRoleAsync(Guid userId, Guid roleId, CancellationToken ct = default)
     {
-        var existing = await DbContext.UserRoles
-            .FirstOrDefaultAsync(ur => ur.UserId == userId && ur.RoleId == roleId, ct);
+        var user = await DbContext.Users
+            .Include(u => u.Roles)
+            .FirstOrDefaultAsync(u => u.Id == userId, ct);
 
-        if (existing is not null)
-        {
-            DbContext.UserRoles.Remove(existing);
-        }
+        user?.RemoveRole(roleId);
     }
 
     public async Task<IReadOnlySet<string>> GetEffectivePermissionsAsync(Guid tenantId, Guid userId, CancellationToken ct = default)
@@ -103,18 +98,11 @@ internal sealed class UserRepository(AppDbContext dbContext, IClock clock)
 
     public async Task SetDirectPermissionAsync(Guid userId, Guid permissionId, bool isGranted, CancellationToken ct = default)
     {
-        var existing = await DbContext.UserPermissions
-            .FirstOrDefaultAsync(up => up.UserId == userId && up.PermissionId == permissionId, ct);
+        var user = await DbContext.Users
+            .Include(u => u.Permissions)
+            .FirstOrDefaultAsync(u => u.Id == userId, ct);
 
-        if (existing is null)
-        {
-            var up = new UserPermission(userId, permissionId, isGranted);
-            await DbContext.UserPermissions.AddAsync(up, ct);
-        }
-        else
-        {
-            existing.SetGranted(isGranted);
-        }
+        user?.SetDirectPermission(permissionId, isGranted);
     }
 
     public async Task<PagedResult<UserListItem>> ListUsersAsync(Guid tenantId, PageRequest page, CancellationToken ct = default)
