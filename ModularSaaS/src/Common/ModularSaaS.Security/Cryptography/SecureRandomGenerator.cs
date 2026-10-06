@@ -47,7 +47,7 @@ public sealed class SecureRandomGenerator : ISecureRandomGenerator
     {
         if (a is null || b is null)
         {
-            return a == b;
+            return ReferenceEquals(a, b);
         }
 
         var aBytes = Encoding.UTF8.GetBytes(a);

@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace ModularSaaS.Security.Cryptography;
 
 public sealed class BCryptPasswordHasher
@@ -31,7 +33,7 @@ public sealed class BCryptPasswordHasher
         {
             return BCrypt.Net.BCrypt.EnhancedVerify(password, passwordHash);
         }
-        catch (Exception)
+        catch (Exception ex) when (ex is BCrypt.Net.SaltParseException or FormatException or ArgumentException)
         {
             return false;
         }
@@ -57,7 +59,7 @@ public sealed class BCryptPasswordHasher
         }
 
         var parts = passwordHash.Split('$');
-        if (parts.Length > 2 && int.TryParse(parts[2], out var currentWorkFactor))
+        if (parts.Length > 2 && int.TryParse(parts[2], CultureInfo.InvariantCulture, out var currentWorkFactor))
         {
             return currentWorkFactor < _workFactor;
         }

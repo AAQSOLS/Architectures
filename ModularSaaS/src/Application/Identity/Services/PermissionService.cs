@@ -11,12 +11,12 @@ internal sealed class PermissionService(IPermissionRepository permissionReposito
         var all = await permissionRepository.GetAllAsync(ct);
 
         var groups = all
-            .GroupBy(p => p.Module)
-            .OrderBy(g => g.Key)
+            .GroupBy(p => p.Module, StringComparer.Ordinal)
+            .OrderBy(g => g.Key, StringComparer.Ordinal)
             .Select(g => new PermissionGroupResult(
                 g.Key,
                 g.Select(p => new PermissionItem(p.Id, p.Code, p.Name, p.Description))
-                 .OrderBy(p => p.Code)
+                 .OrderBy(p => p.Code, StringComparer.Ordinal)
                  .ToList()))
             .ToList();
 

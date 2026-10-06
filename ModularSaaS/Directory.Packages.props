@@ -7,6 +7,9 @@
   <ItemGroup>
     <GlobalPackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.556" />
     <GlobalPackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="3.3.4" />
+    <GlobalPackageReference Include="Meziantou.Analyzer" Version="3.0.294" />
+    <GlobalPackageReference Include="SonarAnalyzer.CSharp" Version="10.35.0.4138" />
+    <GlobalPackageReference Include="Roslynator.Analyzers" Version="5.0.1" />
   </ItemGroup>
 
   <!-- Central Package Versions -->
@@ -54,6 +57,7 @@
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.0.2" />
+    <PackageVersion Include="xunit.analyzers" Version="2.1.0" />
     <PackageVersion Include="coverlet.collector" Version="6.0.4" />
     <PackageVersion Include="Mono.Cecil" Version="0.11.6" />
   </ItemGroup>

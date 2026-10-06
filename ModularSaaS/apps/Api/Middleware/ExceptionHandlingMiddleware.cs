@@ -13,11 +13,13 @@ internal sealed class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<
         {
             await next(context);
         }
-        catch (Exception ex)
+#pragma warning disable S2221 // Global exception handler middleware must intercept any unhandled exception
+        catch (Exception ex) when (ex is not OperationCanceledException)
         {
             logger.LogError(ex, "An unhandled exception occurred: {Message}", ex.Message);
             await HandleExceptionAsync(context, ex);
         }
+#pragma warning restore S2221
     }
 
     private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
@@ -55,7 +57,7 @@ internal sealed class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<
                 Detail = ex.Message,
                 Type = ProblemDetailsConstants.UnauthorizedType
             },
-            var ex when ex.GetType().Name == ProblemDetailsConstants.DomainExceptionName => new ProblemDetails
+            var ex when string.Equals(ex.GetType().Name, ProblemDetailsConstants.DomainExceptionName, StringComparison.Ordinal) => new ProblemDetails
             {
                 Status = StatusCodes.Status422UnprocessableEntity,
                 Title = ProblemDetailsConstants.BusinessRuleViolationTitle,
@@ -72,6 +74,6 @@ internal sealed class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<
         };
 
         context.Response.StatusCode = problem.Status ?? StatusCodes.Status500InternalServerError;
-        await context.Response.WriteAsync(JsonSerializer.Serialize(problem));
+        await context.Response.WriteAsync(JsonSerializer.Serialize(problem), context.RequestAborted);
     }
 }

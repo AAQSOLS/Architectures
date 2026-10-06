@@ -21,7 +21,7 @@ internal sealed class OutboxProcessorBackgroundService(
         PropertyNameCaseInsensitive = true
     };
 
-    private static readonly ConcurrentDictionary<string, Type?> TypeCache = new();
+    private static readonly ConcurrentDictionary<string, Type?> TypeCache = new(StringComparer.Ordinal);
     private static readonly ConcurrentDictionary<Type, MethodInfo> HandlerMethodCache = new();
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -36,7 +36,7 @@ internal sealed class OutboxProcessorBackgroundService(
         {
             return;
         }
-        catch (Exception ex)
+        catch (Exception ex) when (!stoppingToken.IsCancellationRequested)
         {
             logger.LogError(ex, "Unexpected error occurred during initial outbox processing.");
         }
@@ -58,7 +58,7 @@ internal sealed class OutboxProcessorBackgroundService(
             {
                 break;
             }
-            catch (Exception ex)
+            catch (Exception ex) when (!stoppingToken.IsCancellationRequested)
             {
                 logger.LogError(ex, "Unexpected error occurred during outbox processing cycle.");
             }
@@ -105,7 +105,7 @@ internal sealed class OutboxProcessorBackgroundService(
             {
                 throw;
             }
-            catch (Exception ex)
+            catch (Exception ex) when (!stoppingToken.IsCancellationRequested)
             {
                 message.RetryCount++;
                 var errorText = ex.ToString();
@@ -189,7 +189,8 @@ internal sealed class OutboxProcessorBackgroundService(
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
                 type = assembly.GetType(simpleName)
-                    ?? assembly.GetTypes().FirstOrDefault(t => t.FullName == simpleName || t.Name == simpleName);
+                    ?? assembly.GetTypes().FirstOrDefault(t => string.Equals(t.FullName, simpleName, StringComparison.Ordinal) ||
+                                                               string.Equals(t.Name, simpleName, StringComparison.Ordinal));
                 if (type is not null)
                 {
                     return type;

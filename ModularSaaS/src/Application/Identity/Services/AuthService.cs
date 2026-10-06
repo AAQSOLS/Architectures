@@ -41,12 +41,9 @@ internal sealed class AuthService(
         }
 
         var now = clock.UtcNow;
-        if (user.Status == UserStatus.Locked)
+        if (user.Status == UserStatus.Locked && user.LockoutEndUtc.HasValue && user.LockoutEndUtc.Value > now)
         {
-            if (user.LockoutEndUtc.HasValue && user.LockoutEndUtc.Value > now)
-            {
-                return Result.Failure<AuthTokensResult>(AuthErrors.AccountLocked);
-            }
+            return Result.Failure<AuthTokensResult>(AuthErrors.AccountLocked);
         }
 
         if (!passwordHasher.Verify(input.Password, user.PasswordHash))

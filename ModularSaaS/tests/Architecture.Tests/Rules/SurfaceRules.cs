@@ -9,7 +9,7 @@ namespace ModularSaaS.Architecture.Tests.Rules;
 /// <summary>Shape of Application/host public surface and Domain enums.</summary>
 public partial class SurfaceRules
 {
-    [GeneratedRegex(@"^I\w+(Service|Reader)$")]
+    [GeneratedRegex(@"^I\w+(Service|Reader)$", RegexOptions.None, matchTimeoutMilliseconds: 1000)]
     private static partial Regex ServiceOrReaderInterface();
 
     private static bool IsDomainNonEnum(TypeReference t) =>

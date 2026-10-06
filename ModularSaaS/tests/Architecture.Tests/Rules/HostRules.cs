@@ -8,7 +8,7 @@ namespace ModularSaaS.Architecture.Tests.Rules;
 /// <summary>Hosts see only Application Abstractions + Models, and Domain enums.</summary>
 public partial class HostRules
 {
-    [GeneratedRegex(@"^I\w*Repository(`\d+)?$")]
+    [GeneratedRegex(@"^I\w*Repository(`\d+)?$", RegexOptions.None, matchTimeoutMilliseconds: 1000)]
     private static partial Regex RepositoryName();
 
     private static bool IsAppSurface(Ref r) =>

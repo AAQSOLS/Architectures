@@ -59,7 +59,8 @@ public static class HealthCheckExtensions
                             durationMs = e.Value.Duration.TotalMilliseconds,
                             description = e.Value.Description,
                             error = e.Value.Exception?.Message
-                        })
+                        },
+                        StringComparer.Ordinal)
                 };
 
                 await context.Response.WriteAsync(JsonSerializer.Serialize(response, DetailedJsonOptions));

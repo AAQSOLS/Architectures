@@ -167,6 +167,10 @@ dotnet_diagnostic.S2930.severity = warning      # IDisposables should be dispose
 dotnet_diagnostic.S3247.severity = warning      # duplicate casts
 dotnet_diagnostic.S3649.severity = warning      # SQL injection (needs SonarQube/SonarCloud taint analysis)
 dotnet_diagnostic.S2094.severity = suggestion   # empty classes
+dotnet_diagnostic.S2365.severity = suggestion   # properties copying collections
+dotnet_diagnostic.S3011.severity = none         # reflection accessibility bypass (EF Core query filter)
+dotnet_diagnostic.S3241.severity = suggestion   # method return type used as fluent builder
+dotnet_diagnostic.S5122.severity = suggestion   # permissive default CORS policy for development starter
 dotnet_diagnostic.S3604.severity = none         # redundant member initializers
 dotnet_diagnostic.S1135.severity = none         # track TODO comments
 dotnet_diagnostic.S2326.severity = none         # unused type parameter (CQRS marker interfaces)
@@ -175,6 +179,11 @@ dotnet_diagnostic.S2326.severity = none         # unused type parameter (CQRS ma
 roslynator_analyzers.enabled_by_default = false
 dotnet_diagnostic.RCS1079.severity = suggestion # throwing NotImplementedException
 dotnet_diagnostic.RCS1233.severity = suggestion # use short-circuiting operator
+
+# --- Meziantou.Analyzer ---
+dotnet_diagnostic.MA0004.severity = none         # ConfigureAwait(false) not needed in ASP.NET Core apps
+dotnet_diagnostic.MA0048.severity = none         # Allow CQRS slice DTOs co-located in single file
+dotnet_diagnostic.MA0051.severity = none         # Method length limit (DI configuration methods exceed 60 lines)
 
 # -----------------------------------------------------------------------------
 # 5. Naming rules (global)
@@ -422,6 +431,12 @@ dotnet_diagnostic.CA1707.severity = none        # underscores in test names
 dotnet_diagnostic.CA1852.severity = none
 dotnet_diagnostic.CA2000.severity = none
 dotnet_diagnostic.S112.severity = none
+dotnet_diagnostic.S2699.severity = none         # tests verifying implicit execution/no throws
+dotnet_diagnostic.S6612.severity = none
+dotnet_diagnostic.MA0002.severity = none
+dotnet_diagnostic.MA0006.severity = none
+dotnet_diagnostic.MA0009.severity = none
+dotnet_diagnostic.MA0011.severity = none
 dotnet_diagnostic.SA1402.severity = none
 dotnet_diagnostic.SA1649.severity = none
 dotnet_diagnostic.IDE0130.severity = none

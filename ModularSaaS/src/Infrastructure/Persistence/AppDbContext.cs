@@ -44,13 +44,10 @@ internal class AppDbContext(
 
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
 
-        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes().Where(e => typeof(ITenantEntity).IsAssignableFrom(e.ClrType)))
         {
-            if (typeof(ITenantEntity).IsAssignableFrom(entityType.ClrType))
-            {
-                var genericMethod = SetQueryFilterMethod.MakeGenericMethod(entityType.ClrType);
-                genericMethod.Invoke(this, [modelBuilder]);
-            }
+            var genericMethod = SetQueryFilterMethod.MakeGenericMethod(entityType.ClrType);
+            genericMethod.Invoke(this, [modelBuilder]);
         }
     }
 

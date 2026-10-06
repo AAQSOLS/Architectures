@@ -10,7 +10,7 @@ public sealed class PermissionAuthorizationHandler(IServiceProvider serviceProvi
     protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
     {
         // 1. Direct permission claim on the principal
-        if (context.User.HasClaim(c => c.Type == SecurityClaimTypes.Permission &&
+        if (context.User.HasClaim(c => string.Equals(c.Type, SecurityClaimTypes.Permission, StringComparison.Ordinal) &&
                                        string.Equals(c.Value, requirement.Permission, StringComparison.OrdinalIgnoreCase)))
         {
             context.Succeed(requirement);
@@ -19,9 +19,10 @@ public sealed class PermissionAuthorizationHandler(IServiceProvider serviceProvi
 
         // 2. Platform super admins bypass tenant permission requirements
         if (context.User.IsInRole(SecurityRoles.PlatformAdmin) ||
-            context.User.HasClaim(c => (c.Type == SecurityClaimTypes.Role || c.Type == ClaimTypes.Role) &&
+            context.User.HasClaim(c => (string.Equals(c.Type, SecurityClaimTypes.Role, StringComparison.Ordinal) ||
+                                        string.Equals(c.Type, ClaimTypes.Role, StringComparison.Ordinal)) &&
                                        string.Equals(c.Value, SecurityRoles.PlatformAdmin, StringComparison.OrdinalIgnoreCase)) ||
-            context.User.HasClaim(c => c.Type == SecurityClaimTypes.Scope &&
+            context.User.HasClaim(c => string.Equals(c.Type, SecurityClaimTypes.Scope, StringComparison.Ordinal) &&
                                        string.Equals(c.Value, "Platform", StringComparison.OrdinalIgnoreCase)))
         {
             context.Succeed(requirement);

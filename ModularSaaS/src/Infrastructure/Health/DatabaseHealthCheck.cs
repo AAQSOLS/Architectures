@@ -1,3 +1,4 @@
+using System.Data.Common;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using ModularSaaS.Infrastructure.Persistence;
 
@@ -14,7 +15,7 @@ internal sealed class DatabaseHealthCheck(AppDbContext dbContext) : IHealthCheck
                 ? HealthCheckResult.Healthy("Database connection verified.")
                 : HealthCheckResult.Unhealthy("Database could not be reached.");
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is DbException or TimeoutException or InvalidOperationException)
         {
             return HealthCheckResult.Unhealthy("Database health check failed.", ex);
         }

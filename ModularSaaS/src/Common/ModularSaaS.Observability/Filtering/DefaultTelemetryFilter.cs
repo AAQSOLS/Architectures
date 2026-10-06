@@ -24,14 +24,6 @@ public sealed class DefaultTelemetryFilter : ITelemetryFilter
             return false;
         }
 
-        foreach (var prefix in ExcludedPrefixes)
-        {
-            if (path.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return ExcludedPrefixes.Any(prefix => path.StartsWith(prefix, StringComparison.OrdinalIgnoreCase));
     }
 }
