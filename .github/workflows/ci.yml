@@ -64,3 +64,36 @@ jobs:
 
       - name: Build Application (Verify Budgets)
         run: npm run build
+
+  web-quality:
+    name: Web Quality & Build (Next.js)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ModularSaaS/apps/Web
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+          cache: 'npm'
+          cache-dependency-path: ModularSaaS/apps/Web/package.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify Formatting (Prettier)
+        run: npm run format
+
+      - name: Run ESLint & SonarJS (Zero Warnings)
+        run: npm run lint
+
+      - name: TypeScript Strict Type Check
+        run: npm run typecheck
+
+      - name: Build Application (Turbopack)
+        run: npm run build
