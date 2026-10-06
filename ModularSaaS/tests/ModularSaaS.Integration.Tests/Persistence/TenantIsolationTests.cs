@@ -11,7 +11,7 @@ namespace ModularSaaS.Integration.Tests.Persistence;
 
 public class TenantIsolationTests : IntegrationTestBase
 {
-    public TenantIsolationTests(MsSqlDatabaseFixture databaseFixture) : base(databaseFixture)
+    public TenantIsolationTests(PostgreSqlDatabaseFixture databaseFixture) : base(databaseFixture)
     {
     }
 

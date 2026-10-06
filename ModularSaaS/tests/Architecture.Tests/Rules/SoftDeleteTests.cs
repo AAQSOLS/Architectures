@@ -58,7 +58,7 @@ public class SoftDeleteTests
     public void AppDbContext_Model_Configures_QueryFilter_For_SoftDeletable_Entities()
     {
         var options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseSqlServer("Server=localhost;Database=TestDb;Trusted_Connection=True;TrustServerCertificate=True;")
+            .UseNpgsql("Host=localhost;Database=TestDb;Username=postgres;Password=postgres")
             .Options;
 
         var tenantContext = new TestTenantContext(Guid.NewGuid());
@@ -89,7 +89,7 @@ public class SoftDeleteTests
         var interceptor = new SoftDeleteInterceptor(testClock, testUser);
 
         var options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseSqlServer("Server=localhost;Database=TestDb;Trusted_Connection=True;TrustServerCertificate=True;")
+            .UseNpgsql("Host=localhost;Database=TestDb;Username=postgres;Password=postgres")
             .Options;
 
         var tenantContext = new TestTenantContext(Guid.NewGuid());

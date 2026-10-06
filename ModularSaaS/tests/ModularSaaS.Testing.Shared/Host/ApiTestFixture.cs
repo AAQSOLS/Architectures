@@ -5,7 +5,7 @@ namespace ModularSaaS.Testing.Shared.Host;
 
 public sealed class ApiTestFixture : CustomWebApplicationFactory, IAsyncLifetime
 {
-    private static readonly MsSqlDatabaseFixture SharedDb = new();
+    private static readonly PostgreSqlDatabaseFixture SharedDb = new();
 
     public ApiTestFixture() : base(SharedDb)
     {

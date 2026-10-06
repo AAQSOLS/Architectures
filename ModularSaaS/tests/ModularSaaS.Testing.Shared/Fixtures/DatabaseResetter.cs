@@ -1,4 +1,4 @@
-using Microsoft.Data.SqlClient;
+using Npgsql;
 using Respawn;
 
 namespace ModularSaaS.Testing.Shared.Fixtures;
@@ -9,13 +9,14 @@ public sealed class DatabaseResetter
 
     public async Task ResetAsync(string connectionString)
     {
-        await using var connection = new SqlConnection(connectionString);
+        await using var connection = new NpgsqlConnection(connectionString);
         await connection.OpenAsync();
 
         _respawner ??= await Respawner.CreateAsync(connection, new RespawnerOptions
         {
+            DbAdapter = DbAdapter.Postgres,
             TablesToIgnore = ["__EFMigrationsHistory"],
-            SchemasToInclude = ["dbo"]
+            SchemasToInclude = ["public"]
         });
 
         await _respawner.ResetAsync(connection);

@@ -29,7 +29,7 @@
 | Product | SaaS: online store (Angular SSR) + admin portal (MVC) for physical stores, inventory, warehouses, POS, walk-in customers, store management |
 | Tenancy | Multi-tenant SaaS. Platform admin (no tenant), tenant admin, tenant users |
 | Hosts | `Client.Api` (website, mobile, external clients), `Admin.Mvc` (platform + tenant back office) |
-| Database | SQL Server, one database, one `DbContext`, one schema per module |
+| Database | PostgreSQL, one database, one `DbContext`, one schema per module |
 | Data access | EF Core (writes, simple reads) + Dapper calling stored procedures (complex reads, reports) |
 | Schema management | EF Core migrations for tables; SPs as re-runnable `CREATE OR ALTER` scripts |
 | Mapping | Mapster (strict) |
@@ -231,7 +231,7 @@ ModularSaaS/
 └── tests/
     ├── Domain.UnitTests/
     ├── Application.UnitTests/
-    ├── Infrastructure.IntegrationTests/   # real SQL Server (Testcontainers), SP tests
+    ├── Infrastructure.IntegrationTests/   # real PostgreSQL (Testcontainers), SP tests
     ├── Architecture.Tests/                # layer + module + host boundary rules
     └── Client.Api.IntegrationTests/
 ```
@@ -405,7 +405,7 @@ internal sealed class InventoryReader(AppDbContext db, ITenantContext tenant) : 
 - **Result shapes:** Dapper materializes straight into Application result types. Column names match property names.
 - **Transactions:** Dapper uses the EF connection and current transaction (`db.Database.GetDbConnection()`, `CurrentTransaction`) so `IUnitOfWork` covers both.
 - **Parameters:** always parameterized. No string concatenation into SQL.
-- **Tests:** every SP has an integration test against real SQL Server (Testcontainers). Cross-tenant leak tests are mandatory for tenant-scoped SPs.
+- **Tests:** every SP has an integration test against real PostgreSQL (Testcontainers). Cross-tenant leak tests are mandatory for tenant-scoped SPs.
 
 ### 7.4 Unit of work and transactions
 
@@ -762,7 +762,7 @@ public class LayerTests
 |---|---|
 | `Domain.UnitTests` | Aggregate behavior, invariants, value objects, domain services. No mocks of infrastructure |
 | `Application.UnitTests` | Services with fake repositories/readers, validators, permission checks |
-| `Infrastructure.IntegrationTests` | Real SQL Server (Testcontainers): EF configs, repositories, readers, every SP, tenant isolation |
+| `Infrastructure.IntegrationTests` | Real PostgreSQL (Testcontainers): EF configs, repositories, readers, every SP, tenant isolation |
 | `Architecture.Tests` | §14 |
 | `Client.Api.IntegrationTests` | `WebApplicationFactory`, auth, tenant resolution, contract shape, versioning |
 

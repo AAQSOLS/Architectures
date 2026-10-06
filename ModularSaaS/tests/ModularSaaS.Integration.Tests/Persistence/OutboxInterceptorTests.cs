@@ -10,7 +10,7 @@ namespace ModularSaaS.Integration.Tests.Persistence;
 
 public class OutboxInterceptorTests : IntegrationTestBase
 {
-    public OutboxInterceptorTests(MsSqlDatabaseFixture databaseFixture) : base(databaseFixture)
+    public OutboxInterceptorTests(PostgreSqlDatabaseFixture databaseFixture) : base(databaseFixture)
     {
     }
 

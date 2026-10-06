@@ -4,6 +4,6 @@ using Xunit;
 namespace ModularSaaS.Integration.Tests.Collections;
 
 [CollectionDefinition("Database")]
-public class DatabaseTestCollection : ICollectionFixture<MsSqlDatabaseFixture>
+public class DatabaseTestCollection : ICollectionFixture<PostgreSqlDatabaseFixture>
 {
 }

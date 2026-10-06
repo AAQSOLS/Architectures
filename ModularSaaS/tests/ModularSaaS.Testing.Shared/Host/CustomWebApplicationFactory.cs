@@ -10,10 +10,10 @@ namespace ModularSaaS.Testing.Shared.Host;
 
 public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 {
-    private readonly MsSqlDatabaseFixture _databaseFixture;
+    private readonly PostgreSqlDatabaseFixture _databaseFixture;
     public FakeEmailSender FakeEmailSender { get; } = new();
 
-    public CustomWebApplicationFactory(MsSqlDatabaseFixture databaseFixture)
+    public CustomWebApplicationFactory(PostgreSqlDatabaseFixture databaseFixture)
     {
         _databaseFixture = databaseFixture;
     }

@@ -12,10 +12,10 @@ namespace ModularSaaS.Integration.Tests.Common;
 [Collection("Database")]
 public abstract class IntegrationTestBase : IAsyncLifetime
 {
-    protected MsSqlDatabaseFixture DatabaseFixture { get; }
+    protected PostgreSqlDatabaseFixture DatabaseFixture { get; }
     private readonly DatabaseResetter _resetter = new();
 
-    protected IntegrationTestBase(MsSqlDatabaseFixture databaseFixture)
+    protected IntegrationTestBase(PostgreSqlDatabaseFixture databaseFixture)
     {
         DatabaseFixture = databaseFixture;
     }
@@ -42,7 +42,7 @@ public abstract class IntegrationTestBase : IAsyncLifetime
         var outboxInterceptor = new OutboxInterceptor();
 
         var options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseSqlServer(DatabaseFixture.ConnectionString)
+            .UseNpgsql(DatabaseFixture.ConnectionString)
             .AddInterceptors(tenantInterceptor, softDeleteInterceptor, auditInterceptor, outboxInterceptor)
             .Options;
 

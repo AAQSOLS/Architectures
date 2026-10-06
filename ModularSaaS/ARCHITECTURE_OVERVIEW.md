@@ -37,7 +37,7 @@ flowchart TD
     subgraph InfraLayer["5. Infrastructure Layer (src/Infrastructure)"]
         DbContext["AppDbContext (Internal)"]
         Interceptors["EF Core Interceptors<br/>- TenantInterceptor (Auto-stamps TenantId)<br/>- AuditInterceptor (Timestamps)"]
-        DataStores["Repositories & Readers<br/>(SQL Server Database)"]
+        DataStores["Repositories & Readers<br/>(PostgreSQL Database)"]
     end
 
     subgraph Common["6. Cross-Cutting Common Libraries (src/Common)"]
@@ -84,7 +84,7 @@ sequenceDiagram
     participant Svc as UserService
     participant Repo as UserRepository
     participant Interceptor as TenantInterceptor
-    participant DB as SQL Server
+    participant DB as PostgreSQL
 
     Client->>Pipe: POST /api/v1/users (Bearer Token + JSON)
     Note over Pipe: 1. Trace started (OpenTelemetry W3C)<br/>2. JWT signature & expiry verified (Zero Clock Skew)<br/>3. Tenant resolved from claim / header<br/>4. Tenant Guard: Token tid == Header tid?<br/>5. HasPermission("Users.Write")

@@ -1,6 +1,6 @@
 # ModularSaaS - Production-Grade .NET 10 Multi-Tenant Modular Monolith
 
-A production-grade, Clean Architecture modular monolith backend template targeting .NET 10, Entity Framework Core 10, SQL Server, and ASP.NET Core Web API.
+A production-grade, Clean Architecture modular monolith backend template targeting .NET 10, Entity Framework Core 10, PostgreSQL, and ASP.NET Core Web API.
 
 ---
 
@@ -14,7 +14,7 @@ apps/
 src/
   Domain/                        # Enterprise entities, value objects, domain invariants, enums
   Application/                   # Use cases, interfaces, validators, DTO models (Identity & Tenancy)
-  Infrastructure/                # EF Core 10 persistence, SQL Server, JWT, BCrypt, clock, seeders
+  Infrastructure/                # EF Core 10 persistence, PostgreSQL, JWT, BCrypt, clock, seeders
 tests/
   Architecture.Tests/            # Automated Mono.Cecil architecture rule suite (A1-A13)
 ```
@@ -40,7 +40,7 @@ tests/
 ### Security & Identity
 - **Normalized 7-Table RBAC**: Granular relational permission system with `Users`, `Roles`, `Permissions`, `UserRoles`, `RolePermissions`, `UserPermissions` (explicit user-level grants/revocations), and `PlatformUsers`.
 - **Platform Super-Admin & Impersonation**: Dedicated platform administrators (`PlatformUsers`) with audit-tracked tenant impersonation adhering to **RFC 8693** (`act` actor claim).
-- **Token Security**: HMAC-SHA256 JWT access tokens paired with high-entropy cryptographic refresh tokens stored in SQL Server with rotation tracking.
+- **Token Security**: HMAC-SHA256 JWT access tokens paired with high-entropy cryptographic refresh tokens stored in PostgreSQL with rotation tracking.
 - **Password Safety**: BCrypt work-factor hashing with cryptographically secure, single-use password recovery tokens.
 - **Permission Policy Provider**: Custom `IPolicyProvider` dynamically transforms `[HasPermission("...")]` controller attributes into ASP.NET Core authorization policies evaluated against cached user permission sets (`IPermissionCache`).
 - **Defensive Rate Limiting**: Built-in ASP.NET Core RateLimiter configured with partition policies: strict limits on auth/login endpoints (5 req/min per IP) and standard limits on authenticated API calls (100 req/min).
@@ -51,7 +51,7 @@ tests/
 
 ### Prerequisites
 - .NET 10 SDK (v10.0.100 or later)
-- SQL Server (LocalDB, Express, or Docker container)
+- PostgreSQL 15+ (local instance or Docker container)
 
 ### Configuration
 
@@ -60,7 +60,7 @@ Connection strings and JWT settings are configured in [`apps/Api/appsettings.jso
 ```json
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=ModularSaaS;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True"
+    "DefaultConnection": "Host=localhost;Port=5432;Database=ModularSaaS;Username=postgres;Password=postgres"
   },
   "Jwt": {
     "Issuer": "ModularSaaS",

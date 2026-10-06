@@ -1,20 +1,20 @@
-using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ModularSaaS.Application;
 using ModularSaaS.Infrastructure;
 using ModularSaaS.Infrastructure.Persistence;
 using ModularSaaS.Observability;
-using Testcontainers.MsSql;
+using Npgsql;
+using Testcontainers.PostgreSql;
 using Xunit;
 
 namespace ModularSaaS.Testing.Shared.Fixtures;
 
-public sealed class MsSqlDatabaseFixture : IAsyncLifetime
+public sealed class PostgreSqlDatabaseFixture : IAsyncLifetime
 {
-    private MsSqlContainer? _container;
+    private PostgreSqlContainer? _container;
     private string? _databaseName;
-    private bool _isLocalDb;
+    private bool _isLocalInstance;
 
     public string ConnectionString { get; private set; } = string.Empty;
 
@@ -30,9 +30,11 @@ public sealed class MsSqlDatabaseFixture : IAsyncLifetime
 
         try
         {
-            _container = new MsSqlBuilder()
-                .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
-                .WithPassword("Strong_Passw0rd!")
+            _container = new PostgreSqlBuilder()
+                .WithImage("postgres:17-alpine")
+                .WithDatabase("ModularSaaS_Test")
+                .WithUsername("postgres")
+                .WithPassword("postgres")
                 .Build();
 
             await _container.StartAsync();
@@ -40,10 +42,24 @@ public sealed class MsSqlDatabaseFixture : IAsyncLifetime
         }
         catch
         {
-            // Fallback for Windows developer environments without Docker Desktop
-            _isLocalDb = true;
-            _databaseName = $"ModularSaaS_Test_{Guid.NewGuid():N}";
-            ConnectionString = $"Server=(localdb)\\mssqllocaldb;Database={_databaseName};Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True";
+            // Fallback for developer environments without Docker Desktop
+            _isLocalInstance = true;
+            _databaseName = $"modularsaas_test_{Guid.NewGuid():N}";
+            var adminConnection = "Host=localhost;Port=5432;Database=postgres;Username=postgres;Password=postgres;Include Error Detail=true;";
+            try
+            {
+                await using var conn = new NpgsqlConnection(adminConnection);
+                await conn.OpenAsync();
+                await using var cmd = conn.CreateCommand();
+                cmd.CommandText = $"CREATE DATABASE \"{_databaseName}\";";
+                await cmd.ExecuteNonQueryAsync();
+            }
+            catch
+            {
+                // Local PostgreSQL server might not be running or credentials differ
+            }
+
+            ConnectionString = $"Host=localhost;Port=5432;Database={_databaseName};Username=postgres;Password=postgres;Include Error Detail=true;";
         }
 
         await MigrateAndSeedDatabaseAsync();
@@ -96,22 +112,20 @@ public sealed class MsSqlDatabaseFixture : IAsyncLifetime
         {
             await _container.DisposeAsync();
         }
-        else if (_isLocalDb && !string.IsNullOrWhiteSpace(_databaseName))
+        else if (_isLocalInstance && !string.IsNullOrWhiteSpace(_databaseName))
         {
             try
             {
-                var masterConnection = "Server=(localdb)\\mssqllocaldb;Database=master;Trusted_Connection=True;TrustServerCertificate=True";
-                await using var connection = new SqlConnection(masterConnection);
+                var adminConnection = "Host=localhost;Port=5432;Database=postgres;Username=postgres;Password=postgres;Include Error Detail=true;";
+                await using var connection = new NpgsqlConnection(adminConnection);
                 await connection.OpenAsync();
                 await using var command = connection.CreateCommand();
-                command.CommandText = $@"
-                    ALTER DATABASE [{_databaseName}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-                    DROP DATABASE [{_databaseName}];";
+                command.CommandText = $"DROP DATABASE IF EXISTS \"{_databaseName}\" WITH (FORCE);";
                 await command.ExecuteNonQueryAsync();
             }
             catch
             {
-                // Ignore teardown errors in LocalDB
+                // Ignore teardown errors in local instance
             }
         }
     }

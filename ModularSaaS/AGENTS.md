@@ -8,7 +8,7 @@ ModularSaaS is a multi-tenant SaaS modular monolith backend built on Clean Archi
 
 - Framework: .NET 10 (`net10.0`), C# 13 (`LangVersion=latest`)
 - Host: ASP.NET Core Web API (`apps/Api`)
-- Persistence: Entity Framework Core 10, SQL Server (`Microsoft.EntityFrameworkCore.SqlServer`), Dapper for read-side queries
+- Persistence: Entity Framework Core 10, PostgreSQL (`Npgsql.EntityFrameworkCore.PostgreSQL`), Dapper for read-side queries
 - Multi-Tenancy: Single database with `TenantId` discriminator column on `ITenantEntity`, isolated via EF Core Global Query Filters and scoped `ITenantContext`
 - Security & Auth: JWT (HMAC-SHA256), refresh token rotation, BCrypt password hashing, granular 7-table RBAC with dynamic `[HasPermission]` authorization policy provider
 - Mapping: Mapster with strict configuration

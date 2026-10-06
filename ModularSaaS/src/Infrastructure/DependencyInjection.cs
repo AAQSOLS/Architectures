@@ -99,7 +99,7 @@ public static class DependencyInjection
 
         services.AddDbContext<AppDbContext>((sp, options) =>
         {
-            options.UseSqlServer(connectionString);
+            options.UseNpgsql(connectionString);
             options.ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
             options.AddInterceptors(
                 sp.GetRequiredService<TenantInterceptor>(),
