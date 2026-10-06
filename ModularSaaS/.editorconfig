@@ -62,8 +62,14 @@ dotnet_sort_system_directives_first = true
 dotnet_separate_import_directive_groups = false
 
 # --- Predefined types (int, string) instead of BCL names (Int32, String) ---
-dotnet_style_predefined_type_for_locals_parameters_members = true:suggestion
-dotnet_style_predefined_type_for_member_access = true:suggestion
+dotnet_style_predefined_type_for_locals_parameters_members = true:error
+dotnet_style_predefined_type_for_member_access = true:error
+
+# --- this. qualification preferences (disallow this.) ---
+dotnet_style_qualification_for_field = false:error
+dotnet_style_qualification_for_property = false:error
+dotnet_style_qualification_for_method = false:error
+dotnet_style_qualification_for_event = false:error
 
 # --- Async correctness ---
 dotnet_diagnostic.CA2012.severity = warning     # use ValueTasks correctly
@@ -86,7 +92,7 @@ dotnet_diagnostic.RS0030.severity = error
 csharp_style_var_for_built_in_types = true:suggestion
 csharp_style_var_when_type_is_apparent = true:suggestion
 csharp_style_var_elsewhere = true:suggestion
-csharp_prefer_braces = true:warning
+csharp_prefer_braces = true:error
 csharp_style_prefer_primary_constructors = true:suggestion
 csharp_style_expression_bodied_methods = when_on_single_line:suggestion
 csharp_style_expression_bodied_properties = true:suggestion
@@ -127,11 +133,11 @@ dotnet_diagnostic.SA1649.severity = error
 [*.cs]
 
 # --- Strict nullability ---
-dotnet_diagnostic.CS8600.severity = warning     # null literal / possible null to non-nullable
-dotnet_diagnostic.CS8601.severity = warning     # possible null reference assignment
-dotnet_diagnostic.CS8602.severity = warning     # dereference of possibly null reference
-dotnet_diagnostic.CS8603.severity = warning     # possible null reference return
-dotnet_diagnostic.CS8604.severity = warning     # possible null reference argument
+dotnet_diagnostic.CS8600.severity = error       # null literal / possible null to non-nullable
+dotnet_diagnostic.CS8601.severity = error       # possible null reference assignment
+dotnet_diagnostic.CS8602.severity = error       # dereference of possibly null reference
+dotnet_diagnostic.CS8603.severity = error       # possible null reference return
+dotnet_diagnostic.CS8604.severity = error       # possible null reference argument
 dotnet_diagnostic.CS8618.severity = warning     # non-nullable not initialized in constructor
 dotnet_diagnostic.CS8619.severity = warning     # nullability mismatch in value
 dotnet_diagnostic.CS8620.severity = warning     # argument nullability mismatch
