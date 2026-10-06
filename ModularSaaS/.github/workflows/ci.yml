@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore ModularSaaS.slnx
+
+      - name: Build with warnings as errors
+        run: dotnet build ModularSaaS.slnx --no-restore --configuration Release --warnaserror
+
+      - name: Run tests
+        run: dotnet test ModularSaaS.slnx --no-build --configuration Release --verbosity normal
