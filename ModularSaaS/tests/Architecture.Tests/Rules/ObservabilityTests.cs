@@ -33,8 +33,8 @@ public class ObservabilityTests
         var sanitized = SensitiveDataSanitizer.SanitizeUrl(rawUrl);
 
         Assert.Equal("/api/auth/reset-password?REDACTED", sanitized);
-        Assert.DoesNotContain("SuperSecretToken12345", sanitized);
-        Assert.DoesNotContain("user@test.com", sanitized);
+        Assert.DoesNotContain("SuperSecretToken12345", sanitized, StringComparison.Ordinal);
+        Assert.DoesNotContain("user@test.com", sanitized, StringComparison.Ordinal);
     }
 
     [Fact]

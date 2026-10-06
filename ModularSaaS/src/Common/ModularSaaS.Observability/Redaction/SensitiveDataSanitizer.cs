@@ -23,7 +23,7 @@ public static class SensitiveDataSanitizer
             return string.Empty;
         }
 
-        var queryIndex = rawUrl.IndexOf('?');
+        var queryIndex = rawUrl.IndexOf('?', StringComparison.Ordinal);
         if (queryIndex < 0)
         {
             return rawUrl;

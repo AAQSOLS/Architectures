@@ -1,6 +1,19 @@
 namespace ModularSaaS.Application.Shared.Exceptions;
 
-public sealed class UnauthorizedException(string message = "You are not authorized to perform this action.")
-    : Exception(message)
+public sealed class UnauthorizedException : Exception
 {
+    public UnauthorizedException()
+        : base("You are not authorized to perform this action.")
+    {
+    }
+
+    public UnauthorizedException(string message)
+        : base(message)
+    {
+    }
+
+    public UnauthorizedException(string message, Exception innerException)
+        : base(message, innerException)
+    {
+    }
 }

@@ -155,9 +155,20 @@ dotnet_diagnostic.CA1848.severity = suggestion  # use LoggerMessage delegates
 dotnet_diagnostic.CA1851.severity = suggestion  # possible multiple enumeration (noisy)
 dotnet_diagnostic.CA2000.severity = suggestion  # dispose before losing scope (S2930 is the warning)
 dotnet_diagnostic.CA1000.severity = none        # static members on generic types (Result<T>)
+dotnet_diagnostic.CA1008.severity = none        # enums should have zero value
+dotnet_diagnostic.CA1030.severity = none        # use events where appropriate
+dotnet_diagnostic.CA1034.severity = none        # do not nest types (constants/permissions grouped in static classes)
+dotnet_diagnostic.CA1040.severity = none        # avoid empty interfaces (marker interfaces)
+dotnet_diagnostic.CA1054.severity = none        # URI parameter type (raw URL strings in middleware/sanitizers)
+dotnet_diagnostic.CA1055.severity = none        # URI return values (tokens containing Url are strings)
+dotnet_diagnostic.CA1062.severity = suggestion  # validate arguments of public methods (NRT enabled)
+dotnet_diagnostic.CA1308.severity = none        # normalize strings to uppercase (hex tokens are lowercase)
+dotnet_diagnostic.CA1515.severity = none        # make types internal (controllers and Program must be public for test hosts)
 dotnet_diagnostic.CA1711.severity = none        # incorrect identifier suffix
 dotnet_diagnostic.CA1716.severity = none        # identifiers conflict with keywords
+dotnet_diagnostic.CA1724.severity = none        # type name conflicts with namespace (DependencyInjection)
 dotnet_diagnostic.CA1873.severity = none        # expensive argument evaluation in logging
+dotnet_diagnostic.CA2225.severity = none        # operator overloads alternate method (Result<T> implicit conversions)
 
 # --- SonarAnalyzer (needs the SonarAnalyzer.CSharp package) ---
 dotnet_diagnostic.S112.severity = warning       # do not throw general exceptions
@@ -427,6 +438,7 @@ dotnet_diagnostic.RS0030.severity = none
 # -----------------------------------------------------------------------------
 [{tests/**,**/tests/**}]
 dotnet_diagnostic.RS0030.severity = none
+dotnet_diagnostic.CA1307.severity = none        # string comparison in tests
 dotnet_diagnostic.CA1707.severity = none        # underscores in test names
 dotnet_diagnostic.CA1852.severity = none
 dotnet_diagnostic.CA2000.severity = none
