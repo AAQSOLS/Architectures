@@ -4,7 +4,9 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { TenantProvider } from "@/lib/tenant/tenant-context";
+import { TenantThemeInjector } from "@/components/tenant/tenant-theme-injector";
 import { I18nProvider } from "@/lib/i18n/i18n-context";
+import { SessionProvider } from "@/lib/auth/session-context";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { NetworkBanner } from "@/components/network/network-banner";
@@ -57,20 +59,23 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${notoNastaliq.variable} flex min-h-screen flex-col bg-background text-foreground antialiased`}
       >
         <TenantProvider>
+          <TenantThemeInjector />
           <I18nProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-            >
-              <TooltipProvider>
-                <NetworkBanner />
-                <SiteHeader />
-                <main className="flex-1">{children}</main>
-                <SiteFooter />
-              </TooltipProvider>
-            </ThemeProvider>
+            <SessionProvider>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="system"
+                enableSystem
+                disableTransitionOnChange
+              >
+                <TooltipProvider>
+                  <NetworkBanner />
+                  <SiteHeader />
+                  <main className="flex-1">{children}</main>
+                  <SiteFooter />
+                </TooltipProvider>
+              </ThemeProvider>
+            </SessionProvider>
           </I18nProvider>
         </TenantProvider>
       </body>

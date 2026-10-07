@@ -32,6 +32,14 @@ public static class ApiRoutes
         public const string Activate = "{id:guid}/activate";
     }
 
+    public static class PlatformAdmins
+    {
+        public const string Prefix = $"{VersionPrefix}/platform/admins";
+        public const string ById = "{id:guid}";
+        public const string Deactivate = "{id:guid}/deactivate";
+        public const string Activate = "{id:guid}/activate";
+    }
+
     public static class Users
     {
         public const string Prefix = $"{VersionPrefix}/users";

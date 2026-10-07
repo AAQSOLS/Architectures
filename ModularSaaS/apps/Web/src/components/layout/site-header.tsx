@@ -2,11 +2,18 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Layers, Menu } from "lucide-react";
+import { Layers, Menu, User, LogOut } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { useI18n } from "@/lib/i18n/i18n-context";
+import { useSession } from "@/lib/auth/session-context";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Sheet,
   SheetContent,
@@ -19,6 +26,7 @@ import { cn } from "@/lib/utils";
 export function SiteHeader() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const { t } = useI18n();
+  const { isAuthenticated, user, logout } = useSession();
 
   const navItems = React.useMemo(
     () => [
@@ -66,17 +74,44 @@ export function SiteHeader() {
           <ThemeToggle />
 
           <div className="hidden sm:flex items-center gap-2">
-            <a
-              href="http://localhost:4200"
-              target="_blank"
-              rel="noopener noreferrer"
-              className={buttonVariants({ variant: "ghost", size: "sm" })}
-            >
-              {t("nav.portal")}
-            </a>
-            <Link href="#pricing" className={buttonVariants({ size: "sm" })}>
-              {t("nav.getStarted")}
-            </Link>
+            {isAuthenticated ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger
+                  render={
+                    <Button variant="outline" size="sm" className="gap-2">
+                      <User className="size-3.5" />
+                      <span>{user?.name || "Account"}</span>
+                    </Button>
+                  }
+                />
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem
+                    onClick={logout}
+                    className="cursor-pointer text-destructive focus:text-destructive"
+                  >
+                    <LogOut className="mr-2 size-4" />
+                    <span>Sign Out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <>
+                <a
+                  href="http://localhost:4200"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={buttonVariants({ variant: "ghost", size: "sm" })}
+                >
+                  {t("nav.portal")}
+                </a>
+                <Link
+                  href="#pricing"
+                  className={buttonVariants({ size: "sm" })}
+                >
+                  {t("nav.getStarted")}
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Trigger */}
@@ -114,24 +149,39 @@ export function SiteHeader() {
                   </Link>
                 ))}
                 <div className="my-2 h-px bg-border" />
-                <a
-                  href="http://localhost:4200"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={cn(
-                    buttonVariants({ variant: "outline" }),
-                    "w-full justify-center"
-                  )}
-                >
-                  {t("nav.portal")}
-                </a>
-                <Link
-                  href="#pricing"
-                  onClick={() => setMobileOpen(false)}
-                  className={cn(buttonVariants(), "w-full justify-center")}
-                >
-                  {t("nav.getStarted")}
-                </Link>
+                {isAuthenticated ? (
+                  <Button
+                    variant="outline"
+                    className="w-full justify-center text-destructive"
+                    onClick={() => {
+                      logout();
+                      setMobileOpen(false);
+                    }}
+                  >
+                    Sign Out ({user?.email})
+                  </Button>
+                ) : (
+                  <>
+                    <a
+                      href="http://localhost:4200"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={cn(
+                        buttonVariants({ variant: "outline" }),
+                        "w-full justify-center"
+                      )}
+                    >
+                      {t("nav.portal")}
+                    </a>
+                    <Link
+                      href="#pricing"
+                      onClick={() => setMobileOpen(false)}
+                      className={cn(buttonVariants(), "w-full justify-center")}
+                    >
+                      {t("nav.getStarted")}
+                    </Link>
+                  </>
+                )}
               </div>
             </SheetContent>
           </Sheet>

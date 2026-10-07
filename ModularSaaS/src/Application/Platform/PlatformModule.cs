@@ -10,6 +10,7 @@ public static class PlatformModule
     public static IServiceCollection AddPlatformModule(this IServiceCollection services)
     {
         services.AddScoped<IPlatformAuthService, PlatformAuthService>();
+        services.AddScoped<IPlatformUserService, PlatformUserService>();
         services.AddValidatorsFromAssembly(typeof(PlatformModule).Assembly, includeInternalTypes: true);
 
         return services;

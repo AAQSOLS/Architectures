@@ -21,7 +21,12 @@ function resolveTenant(request: NextRequest): string {
   const host = request.headers.get("host") ?? "";
   const parts = host.split(".");
   // e.g. tenant-a.domain.com (3+ parts) or tenant-a.localhost:3000
-  if (parts.length >= 2 && parts[0] && parts[0] !== "www" && parts[0] !== "localhost") {
+  if (
+    parts.length >= 2 &&
+    parts[0] &&
+    parts[0] !== "www" &&
+    parts[0] !== "localhost"
+  ) {
     return parts[0];
   }
 
@@ -33,7 +38,8 @@ function resolveTenant(request: NextRequest): string {
  * Resolves preferred locale (English or Urdu) from cookie or Accept-Language header.
  */
 function resolveLocale(request: NextRequest): SupportedLocale {
-  const cookieLocale = request.cookies.get("NEXT_LOCALE")?.value as SupportedLocale;
+  const cookieLocale = request.cookies.get("NEXT_LOCALE")
+    ?.value as SupportedLocale;
   if (cookieLocale && SUPPORTED_LOCALES.includes(cookieLocale)) {
     return cookieLocale;
   }
