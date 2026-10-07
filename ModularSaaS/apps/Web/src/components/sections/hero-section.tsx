@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import {
   ArrowRight,
@@ -9,8 +11,11 @@ import {
 import { buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { useI18n } from "@/lib/i18n/i18n-context";
 
 export function HeroSection() {
+  const { t } = useI18n();
+
   return (
     <section className="relative overflow-hidden py-20 sm:py-28 lg:py-32">
       {/* Background radial gradient using semantic tokens */}
@@ -24,20 +29,18 @@ export function HeroSection() {
           <div className="mb-6 inline-flex items-center gap-2">
             <Badge variant="outline" className="gap-1.5 py-1 px-3 text-xs">
               <Sparkles className="size-3 text-primary" />
-              <span>Next.js 16 + shadcn/ui Design System</span>
+              <span>{t("hero.badge")}</span>
             </Badge>
           </div>
 
           {/* Headline */}
           <h1 className="font-heading text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl text-balance">
-            Build Scalable Multi-Tenant Applications With Confidence
+            {t("hero.title")}
           </h1>
 
           {/* Subtitle */}
           <p className="mt-6 text-lg leading-relaxed text-muted-foreground text-balance">
-            A battle-tested production starter combining a token-driven Next.js
-            public web portal, Angular 19 admin workspace, and ASP.NET Core
-            clean architecture backend.
+            {t("hero.subtitle")}
           </p>
 
           {/* Action CTAs */}
@@ -46,8 +49,8 @@ export function HeroSection() {
               href="#pricing"
               className={buttonVariants({ size: "lg", className: "gap-2" })}
             >
-              <span>Get Started</span>
-              <ArrowRight className="size-4" />
+              <span>{t("hero.ctaPrimary")}</span>
+              <ArrowRight className="size-4 rtl:rotate-180" />
             </Link>
             <a
               href="http://localhost:4200"
@@ -55,7 +58,7 @@ export function HeroSection() {
               rel="noopener noreferrer"
               className={buttonVariants({ variant: "outline", size: "lg" })}
             >
-              Launch Admin Portal
+              {t("hero.ctaSecondary")}
             </a>
           </div>
 
@@ -63,15 +66,15 @@ export function HeroSection() {
           <div className="mt-10 flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
             <div className="flex items-center gap-1.5">
               <CheckCircle2 className="size-4 text-primary" />
-              <span>100% Token Driven</span>
+              <span>{t("hero.tokenDriven")}</span>
             </div>
             <div className="flex items-center gap-1.5">
               <ShieldCheck className="size-4 text-primary" />
-              <span>WCAG A11y Primitives</span>
+              <span>{t("hero.a11y")}</span>
             </div>
             <div className="flex items-center gap-1.5">
               <Zap className="size-4 text-primary" />
-              <span>Turbopack & App Router</span>
+              <span>{t("hero.turbopack")}</span>
             </div>
           </div>
         </div>
@@ -90,7 +93,7 @@ export function HeroSection() {
                   </span>
                 </div>
                 <Badge variant="secondary" className="text-xs">
-                  Tenant: tenant-alpha
+                  Tenant: default
                 </Badge>
               </div>
             </CardHeader>
@@ -120,7 +123,7 @@ export function HeroSection() {
                   </p>
                   <p className="mt-1 font-heading text-2xl font-bold">14ms</p>
                   <p className="mt-1 text-xs text-muted-foreground">
-                    Global CDN & Edge
+                    Global Edge Cache
                   </p>
                 </div>
               </div>

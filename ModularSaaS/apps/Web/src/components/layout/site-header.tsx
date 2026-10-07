@@ -5,6 +5,8 @@ import Link from "next/link";
 import { Layers, Menu } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { LanguageSwitcher } from "@/components/language-switcher";
+import { useI18n } from "@/lib/i18n/i18n-context";
 import {
   Sheet,
   SheetContent,
@@ -14,15 +16,19 @@ import {
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 
-const NAV_ITEMS = [
-  { label: "Features", href: "#features" },
-  { label: "Architecture", href: "#architecture" },
-  { label: "Pricing", href: "#pricing" },
-  { label: "FAQ", href: "#faq" },
-];
-
 export function SiteHeader() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const { t } = useI18n();
+
+  const navItems = React.useMemo(
+    () => [
+      { label: t("nav.features"), href: "#features" },
+      { label: t("nav.architecture"), href: "#architecture" },
+      { label: t("nav.pricing"), href: "#pricing" },
+      { label: t("nav.faq"), href: "#faq" },
+    ],
+    [t]
+  );
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border bg-background/95 backdrop-blur-md supports-backdrop-filter:bg-background/80">
@@ -43,7 +49,7 @@ export function SiteHeader() {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
-          {NAV_ITEMS.map((item) => (
+          {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
@@ -55,7 +61,8 @@ export function SiteHeader() {
         </nav>
 
         {/* Action Controls */}
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2">
+          <LanguageSwitcher />
           <ThemeToggle />
 
           <div className="hidden sm:flex items-center gap-2">
@@ -65,10 +72,10 @@ export function SiteHeader() {
               rel="noopener noreferrer"
               className={buttonVariants({ variant: "ghost", size: "sm" })}
             >
-              Admin Portal
+              {t("nav.portal")}
             </a>
             <Link href="#pricing" className={buttonVariants({ size: "sm" })}>
-              Get Started
+              {t("nav.getStarted")}
             </Link>
           </div>
 
@@ -96,7 +103,7 @@ export function SiteHeader() {
                 </SheetTitle>
               </SheetHeader>
               <div className="flex flex-col gap-4 p-4 text-sm font-medium">
-                {NAV_ITEMS.map((item) => (
+                {navItems.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
@@ -116,14 +123,14 @@ export function SiteHeader() {
                     "w-full justify-center"
                   )}
                 >
-                  Admin Portal
+                  {t("nav.portal")}
                 </a>
                 <Link
                   href="#pricing"
                   onClick={() => setMobileOpen(false)}
                   className={cn(buttonVariants(), "w-full justify-center")}
                 >
-                  Get Started
+                  {t("nav.getStarted")}
                 </Link>
               </div>
             </SheetContent>

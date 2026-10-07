@@ -1,0 +1,43 @@
+{
+  "nav": {
+    "features": "Features",
+    "architecture": "Architecture",
+    "pricing": "Pricing",
+    "faq": "FAQ",
+    "portal": "Admin Portal",
+    "getStarted": "Get Started"
+  },
+  "hero": {
+    "badge": "Next.js 16 + shadcn/ui Design System",
+    "title": "Build Scalable Multi-Tenant Applications With Confidence",
+    "subtitle": "A battle-tested production starter combining a token-driven Next.js public web portal, Angular 19 admin workspace, and ASP.NET Core clean architecture backend.",
+    "ctaPrimary": "Get Started",
+    "ctaSecondary": "Launch Admin Portal",
+    "tokenDriven": "100% Token Driven",
+    "a11y": "WCAG A11y Primitives",
+    "turbopack": "Turbopack & App Router"
+  },
+  "features": {
+    "badge": "Architecture Highlights",
+    "title": "Engineered For Enterprise SaaS Workloads",
+    "subtitle": "Every architectural decision prioritizes maintainability, strict theming isolation, and seamless full-stack cohesion."
+  },
+  "pricing": {
+    "badge": "Transparent Pricing",
+    "title": "Choose The Plan That Fits Your Growth",
+    "subtitle": "Simple, transparent tiers designed to scale seamlessly alongside your application and tenant base."
+  },
+  "cta": {
+    "badge": "Ready To Ship",
+    "title": "Start Building Your Next SaaS Platform Today",
+    "subtitle": "Designed for developers and enterprise teams demanding clean separation of concerns, robust design tokens, and strict type safety.",
+    "button": "Contact Sales"
+  },
+  "common": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "offlineNotice": "You are currently offline. Actions may be limited.",
+    "onlineRestored": "Back online. Reconnected to server."
+  }
+}
